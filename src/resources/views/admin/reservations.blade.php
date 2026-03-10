@@ -97,7 +97,6 @@
                             @else
                                 <span class="text-gray-400 text-sm italic">Aucune table</span>
                             @endif
-                            <!-- <span class="table-tag">{{ $reservation->tables_id }}</span> -->
                         </div>
                     </td>
                     <td>
@@ -163,7 +162,15 @@
                         {{ $reservation->guest_count }} personnes
                     </td>
                     <td>
-                        <div class="assigned-tables"><span class="table-tag">{{ $reservation->tables_id }}</span></div>
+                        <div class="assigned-tables">
+                            @if(!empty($reservation->tables_id))
+                                @foreach(explode(',', $reservation->tables_id) as $tableNum)
+                                    <span class="table-tag" stykle="float: left; margin-left: 2px;">{{ trim($tableNum) }}</span>
+                                @endforeach
+                            @else
+                                <span class="text-gray-400 text-sm italic">Aucune table</span>
+                            @endif
+                        </div>
                     </td>
                     <td>
                         <div class="text-sm text-gray-500">{{ $reservation->phone ?? '-' }}</div>
@@ -315,7 +322,7 @@
 
 <script>
     // 1. Initialisation des données depuis Laravel
-    let reservations = @json($reservations['confirmed']); 
+    let reservations = @json($reservations['all']); 
     let tables = [
         @foreach($allTables as $table)
             { id: {{ $table->id }}, number: '{{ $table->name }}', capacity: {{ $table->capacity }} },
@@ -494,8 +501,7 @@
     // Previsualiser les detaiuls d'une reservation 
     function viewReservation(id) {
         const r = reservations.find(res => res.id === id);
-        if (!r) return;
-            console.log(r);
+        if (!r) greturn;
             document.getElementById('modalContent').innerHTML = `
             <div style="display: grid; gap: 15px;">
                 <div><strong>Nom :</strong> ${r.nom}</div>

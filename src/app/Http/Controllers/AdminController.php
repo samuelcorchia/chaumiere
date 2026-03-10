@@ -26,6 +26,8 @@ class AdminController extends Controller
         // RESERVATIONS A VALIDER
         $reservations['pending'] = Reservation::where('status', 'pending')->orderBy('reserved_at', 'asc')->get();
         
+        $reservations['all'] = $reservations['confirmed']->merge($reservations['pending']);
+
         // STATS
         $stats['total']  = 0;
         foreach($enumsStatus as $status) {
@@ -36,11 +38,11 @@ class AdminController extends Controller
         foreach($enumsSources as $sources) {
             $stats[$sources] = empty($dateGet) ? 
                 Reservation::where('source', $sources)
-                            ->whereIn('status', $enumsStatus)
+                            ->where('status', 'confirmed')
                             ->whereDate('reserved_at', today())
                             ->count() : 
                 Reservation::where('source', $sources)
-                            ->whereIn('status', $enumsStatus)
+                            ->where('status', 'confirmed')
                             ->whereDate('reserved_at', $dateGet)
                             ->count();
             $stats['total'] += $stats[$sources];
