@@ -61,7 +61,7 @@
             <div class="admin-table-header">
                 <h2 style="font-size: 2em;">➀ Réservations confirmées</h2>
             </div>
-            <table class="admin-table" style="display: table;">
+            <table id="reservationsTableConfirmed" class="admin-table" style="display: table;">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -134,7 +134,7 @@
                 <h2 style="font-size: 2em;">➁ Réservations à valider</h2>
             </div>
 
-            <table class="admin-table" style="display: table;">
+            <table id="reservationsTablePending" class="admin-table" style="display: table;">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -161,7 +161,7 @@
                         <div class="text-sm font-medium text-gray-900">{{ $reservation->nom }}</div>
                     </td>
                     <td>
-                        {{ $reservation->guest_count }} personnes
+                        {{ $reservation->guest_count }}
                     </td>
                     <td>
                         <div class="assigned-tables">
@@ -323,6 +323,27 @@
     </div>
 
 <script>
+    $(document).ready(function() {
+        $('#reservationsTablePending').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": true,
+            "info": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json"
+            }
+        });
+        $('#reservationsTableConfirmed').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": true,
+            "info": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json"
+            }
+        });
+    });
+
     // 1. Initialisation des données depuis Laravel
     let reservations = @json($reservations['all']); 
     let tables = [

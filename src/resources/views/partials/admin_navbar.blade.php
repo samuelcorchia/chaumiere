@@ -9,7 +9,10 @@
             
             <a href="/" target="_blank">Voir le site</a>
 
-            <span style="float: right; margin-left: 2em; width: 2em; filter: grayscale(1) invert(1);"><a href="{{ route('logout') }}"><img src="/images/icons/power.png" alt="Deconnexion" /></a></span>
+            <span style="float: right; margin-left: 2em; width: 2em; filter: grayscale(1) invert(1);"><a href="javascript:void" onclick="document.getElementById('logout-form').submit();"><img src="/images/icons/power.png" alt="Deconnexion" /></a></span>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </nav>
     </div>
 </header>
