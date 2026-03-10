@@ -11,13 +11,13 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
-    {
-        /*$this->call([
+    public function run(): void {
+        $this->call([
             TableSeeder::class,
-            UserSeeder::class, // Si tu en as créé un
-        ]);*/
-        User::factory(10)->create();
+            QuotaSeeder::class,
+            ReservationSeeder::class,
+        ]);
+        /*
         User::factory()->create([
             'name' => 'Aurelien MONTI',
             'email' => 'samuel.corchia@gmail.com',
@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('Br6dd534') 
         ]);
         Table::factory()->count(20)->create();
+        */
     }
 }
