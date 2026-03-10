@@ -14,19 +14,21 @@
                 <span id="quotaDate">📅 <input type="date" id="filterDate" placeholder="Filtrer par date" value="{{ $dateGet ?? \Carbon\Carbon::now()->format('Y-m-d') }}" /></span>
             </div>
             <div class="quota-numbers">
+                <!-- 
                 <div class="quota-number">
-                    <div class="value" id="onlineAvailable">{{ $oQuota->nb }}</div>
+                    <div class="value" id="onlineAvailable" style="font-size:1rem;">{{ $oQuota->nb }}</div>
                     <div class="label">Dispo en ligne</div>
                 </div>
+                -->
                 <div class="quota-number">
                     <div class="value" id="onlineUsed">{{ $stats['web'] }}</div>
-                    <div class="label">En ligne</div>
+                    <div class="label">web</div>
                 </div>
                 <div class="quota-number">
                     <div class="value" id="phoneUsed">{{ $stats['phone'] }}</div>
                     <div class="label">Téléphone</div>
                 </div>
-                <div class="quota-number">
+                <div class="quota-number" style="border: 1px solid #FFF; border-radius: 10px; background-color: lightgreen; color: #000; padding-left: 3em; padding-right: 3em;">
                     <div class="value" id="totalUsed">{{ $stats['total'] }}</div>
                     <div class="label">Total</div>
                 </div>

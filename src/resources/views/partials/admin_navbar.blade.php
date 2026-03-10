@@ -8,6 +8,8 @@
             <a href="{{ route('admin.reservations') }}" class="{{ $page == 'reservations' ? 'active' : '' }}">Réservations</a>
             
             <a href="/" target="_blank">Voir le site</a>
+
+            <span style="float: right; margin-left: 2em; width: 2em; filter: grayscale(1) invert(1);"><a href="{{ route('logout') }}"><img src="/images/icons/power.png" alt="Deconnexion" /></a></span>
         </nav>
     </div>
 </header>
