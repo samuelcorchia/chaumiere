@@ -1,0 +1,1364 @@
+/* ==========================================================================
+   La Chaumière du Télégraphe - Styles CSS
+   Design coloré inspiré de la forêt et de la nature
+   ========================================================================== */
+
+/* Variables CSS - Palette colorée naturelle */
+:root {
+    --color-primary: #2d5016;      /* Vert forêt profond */
+    --color-secondary: #4a7c23;    /* Vert feuillage */
+    --color-accent: #d4a853;       /* Or/Miel - bière */
+    --color-accent-hover: #c49842;
+    --color-warm: #8b4513;         /* Brun bois */
+    --color-cream: #faf8f0;        /* Crème naturel */
+    --color-white: #ffffff;
+    --color-light: #f0ebe0;        /* Beige clair */
+    --color-text: #2c2c2c;
+    --color-text-light: #5a5a5a;
+    --color-overlay: rgba(45, 80, 22, 0.7);
+    --color-overlay-dark: rgba(0, 0, 0, 0.5);
+    --gradient-forest: linear-gradient(135deg, #2d5016 0%, #4a7c23 50%, #6b8e3a 100%);
+    --gradient-warm: linear-gradient(135deg, #d4a853 0%, #c49842 100%);
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Sans Pro', 'Segoe UI', sans-serif;
+    --transition: all 0.3s ease;
+    --shadow-soft: 0 10px 40px rgba(45, 80, 22, 0.15);
+    --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text);
+    background-color: var(--color-cream);
+}
+
+a {
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+h1 { font-size: 3rem; }
+h2 { font-size: 2.5rem; }
+h3 { font-size: 2rem; }
+h4 { font-size: 1.5rem; }
+
+p {
+    margin-bottom: 1rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ==========================================================================
+   Header & Navigation - Style naturel
+   ========================================================================== */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--gradient-forest);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 12px 0;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo::before {
+    content: '🌲';
+    font-size: 1.5rem;
+}
+
+.logo:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+/* Phone number in header */
+.header-phone {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-white);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.header-phone:hover {
+    background: var(--color-accent);
+    text-decoration: none;
+    color: var(--color-white);
+}
+
+.header-phone svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Reserve button in header */
+.header-btn-reserve {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: var(--color-accent);
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 25px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: var(--transition);
+}
+
+.header-btn-reserve:hover {
+    background: #c9963d;
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+/* Google Maps link */
+.address-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.address-link:hover {
+    color: var(--color-accent);
+}
+
+.address-link .maps-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.footer .address-link {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.footer .address-link:hover {
+    color: var(--color-accent);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav {
+    display: flex;
+    gap: 25px;
+}
+
+.nav a {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    position: relative;
+    padding: 5px 0;
+}
+
+.nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--color-accent);
+    transition: var(--transition);
+}
+
+.nav a:hover::after,
+.nav a.active::after {
+    width: 100%;
+}
+
+.nav a:hover,
+.nav a.active {
+    color: var(--color-white);
+    text-decoration: none;
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 2px;
+    background-color: var(--color-white);
+    transition: var(--transition);
+}
+
+/* ==========================================================================
+   Hero Section - Impact visuel
+   ========================================================================== */
+.hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-white);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 25px;
+    border: 3px solid var(--color-accent);
+    border-radius: 50%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--color-white);
+}
+
+.hero p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero a {
+    color: var(--color-accent);
+}
+
+.hero a:hover {
+    color: var(--color-white);
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border: 2px solid var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    animation: bounce 2s infinite;
+}
+
+.scroll-indicator:hover {
+    background: var(--color-accent);
+}
+
+.scroll-indicator svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--color-white);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* ==========================================================================
+   Page Header (for inner pages)
+   ========================================================================== */
+.page-header {
+    position: relative;
+    height: 45vh;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-white);
+    background-size: cover;
+    background-position: center;
+    margin-top: 60px;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.page-header h1 {
+    position: relative;
+    z-index: 1;
+    font-size: 3rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--color-white);
+}
+
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+.section {
+    padding: 80px 0;
+}
+
+.section-light {
+    background-color: var(--color-light);
+}
+
+.section-green {
+    background: var(--gradient-forest);
+    color: var(--color-white);
+}
+
+.section-green h2,
+.section-green h3 {
+    color: var(--color-white);
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title h2 {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 15px;
+}
+
+.section-title h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--gradient-warm);
+    border-radius: 2px;
+}
+
+/* ==========================================================================
+   Présentation Section
+   ========================================================================== */
+.presentation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.presentation-image {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: 4px solid var(--color-accent);
+}
+
+.presentation-content h2 {
+    margin-bottom: 25px;
+}
+
+.presentation-content p {
+    color: var(--color-text-light);
+    margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   Photos Grid - Galerie colorée
+   ========================================================================== */
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.photo-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+}
+
+.photo-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.photo-item:hover img {
+    transform: scale(1.1);
+}
+
+.photo-item.large {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+/* ==========================================================================
+   Infos / Horaires Section
+   ========================================================================== */
+.infos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+}
+
+.info-card {
+    background: var(--color-white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-card);
+    border-top: 4px solid var(--color-accent);
+}
+
+.info-card h3 {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--color-light);
+}
+
+.horaires-list {
+    list-style: none;
+}
+
+.horaires-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-light);
+}
+
+.horaires-list li:last-child {
+    border-bottom: none;
+}
+
+.horaires-list .jour {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.horaires-list .heures {
+    color: var(--color-text-light);
+}
+
+.contact-info p {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.contact-info svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--color-accent);
+}
+
+/* ==========================================================================
+   Concerts Section
+   ========================================================================== */
+.concerts-list {
+    display: grid;
+    gap: 30px;
+}
+
+.concert-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 30px;
+    align-items: center;
+    background: var(--color-white);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+    border-left: 5px solid var(--color-secondary);
+}
+
+.concert-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.concert-date {
+    text-align: center;
+    padding: 15px 25px;
+    background: var(--gradient-forest);
+    color: var(--color-white);
+    border-radius: 12px;
+}
+
+.concert-date .day {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.concert-date .month {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.concert-info h4 {
+    margin-bottom: 5px;
+    color: var(--color-primary);
+}
+
+.concert-info .genre {
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+.concert-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--gradient-warm);
+    border-radius: 25px;
+    color: var(--color-white);
+    font-weight: 600;
+}
+
+.concert-link:hover {
+    transform: scale(1.05);
+    text-decoration: none;
+    color: var(--color-white);
+}
+
+/* ==========================================================================
+   Historique Section
+   ========================================================================== */
+.historique-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.historique-content p {
+    font-size: 1.1rem;
+    color: var(--color-text-light);
+    margin-bottom: 50px;
+}
+
+.timeline {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.timeline-item {
+    position: relative;
+    width: 160px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.timeline-item:hover {
+    transform: scale(1.08);
+}
+
+.timeline-item img {
+    border-radius: 50%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: 4px solid var(--color-accent);
+    transition: var(--transition);
+}
+
+.timeline-item:hover img {
+    border-color: var(--color-secondary);
+}
+
+.timeline-item .year {
+    display: block;
+    margin-top: 15px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-primary);
+}
+
+/* ==========================================================================
+   Gallery Section
+   ========================================================================== */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    aspect-ratio: 1;
+    cursor: pointer;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-item::after {
+    content: '🔍';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 2rem;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.gallery-item:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Privatisation Section
+   ========================================================================== */
+.privatisation-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.privatisation-info h3 {
+    margin-bottom: 20px;
+}
+
+.privatisation-features {
+    list-style: none;
+    margin: 30px 0;
+}
+
+.privatisation-features li {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    color: var(--color-text);
+}
+
+.privatisation-features svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--color-secondary);
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Reservation Form - Design moderne
+   ========================================================================== */
+.reservation-section {
+    background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-light) 100%);
+}
+
+.reservation-form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.reservation-info {
+    padding: 40px;
+    background: var(--gradient-forest);
+    border-radius: 20px;
+    color: var(--color-white);
+}
+
+.reservation-info h2 {
+    color: var(--color-white);
+    margin-bottom: 20px;
+}
+
+.reservation-info p {
+    opacity: 0.9;
+    margin-bottom: 15px;
+}
+
+.reservation-highlights {
+    list-style: none;
+    margin-top: 30px;
+}
+
+.reservation-highlights li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 1rem;
+}
+
+.reservation-highlights li::before {
+    content: '✓';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    font-size: 0.8rem;
+    color: var(--color-white);
+}
+
+/* ==========================================================================
+   Contact Form
+   ========================================================================== */
+.contact-form {
+    background: var(--color-white);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-card);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--color-light);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: var(--color-cream);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    background: var(--color-white);
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: var(--color-text-light);
+    font-size: 0.85rem;
+}
+
+/* CTA Button - Plus percutant */
+.btn-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 50px;
+    background: #d4a853;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 30px rgba(212, 168, 83, 0.4);
+    animation: pulse-cta 2s infinite;
+    text-decoration: none;
+}
+
+.btn-cta:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(212, 168, 83, 0.5);
+    text-decoration: none;
+    color: #ffffff !important;
+    background: #c9963d;
+}
+
+@keyframes pulse-cta {
+    0%, 100% { box-shadow: 0 8px 30px rgba(212, 168, 83, 0.4); }
+    50% { box-shadow: 0 8px 40px rgba(212, 168, 83, 0.6); }
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: var(--gradient-forest);
+    color: var(--color-white);
+    border: none;
+    border-radius: 30px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(45, 80, 22, 0.3);
+    text-decoration: none;
+    color: var(--color-white);
+}
+
+.btn-accent {
+    background: var(--gradient-warm);
+}
+
+.btn-accent:hover {
+    box-shadow: 0 10px 30px rgba(212, 168, 83, 0.4);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--color-secondary);
+    color: var(--color-secondary);
+}
+
+.btn-outline:hover {
+    background: var(--color-secondary);
+    color: var(--color-white);
+}
+
+.btn-large {
+    padding: 18px 50px;
+    font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   Footer - Couleur forêt
+   ========================================================================== */
+.footer {
+    background: var(--gradient-forest);
+    color: var(--color-white);
+    padding: 60px 0 30px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer h4 {
+    color: var(--color-accent);
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.footer p,
+.footer a {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.footer a:hover {
+    color: var(--color-accent);
+}
+
+.footer-nav {
+    list-style: none;
+}
+
+.footer-nav li {
+    margin-bottom: 10px;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.footer-bottom p {
+    font-size: 0.9rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.social-links a:hover {
+    background: var(--color-accent);
+    transform: translateY(-3px);
+}
+
+.social-links svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--color-white);
+}
+
+/* ==========================================================================
+   Admin Panel Styles
+   ========================================================================== */
+.admin-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 15px 0;
+}
+
+.admin-header .logo {
+    color: #e94560;
+}
+
+.admin-header .logo::before {
+    content: '⚙️';
+}
+
+.admin-container {
+    padding-top: 80px;
+    min-height: 100vh;
+    background: #f0f2f5;
+}
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: var(--color-white);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-soft);
+    text-align: center;
+}
+
+.stat-card .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.stat-card .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.stat-card .stat-label {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+}
+
+.stat-card.confirmed .stat-number { color: #27ae60; }
+.stat-card.pending .stat-number { color: #f39c12; }
+.stat-card.cancelled .stat-number { color: #e74c3c; }
+
+.admin-table-container {
+    background: var(--color-white);
+    border-radius: 15px;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+}
+
+.admin-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+    border-bottom: 1px solid var(--color-light);
+}
+
+.admin-table-header h2 {
+    margin: 0;
+}
+
+.admin-filters {
+    display: flex;
+    gap: 15px;
+}
+
+.admin-filters select,
+.admin-filters input {
+    padding: 10px 15px;
+    border: 2px solid var(--color-light);
+    border-radius: 8px;
+    font-family: inherit;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 18px 25px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-light);
+}
+
+.admin-table th {
+    background: var(--color-cream);
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.admin-table tr:hover {
+    background: var(--color-cream);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.confirmed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.action-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    transition: var(--transition);
+}
+
+.action-btn.confirm {
+    background: #27ae60;
+    color: white;
+}
+
+.action-btn.cancel {
+    background: #e74c3c;
+    color: white;
+}
+
+.action-btn.view {
+    background: var(--color-secondary);
+    color: white;
+}
+
+.action-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 992px) {
+    .presentation,
+    .privatisation-content,
+    .reservation-form-container,
+    .infos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .presentation-image {
+        order: -1;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .photos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.8rem; }
+
+    .header-right {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .header-phone {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .nav {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--gradient-forest);
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+    }
+
+    .nav.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .section {
+        padding: 60px 0;
+    }
+
+    .gallery,
+    .photos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .photo-item.large {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+
+    .concert-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-table {
+        font-size: 0.85rem;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 12px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .hero {
+        min-height: 500px;
+    }
+
+    .info-card,
+    .contact-form {
+        padding: 25px;
+    }
+
+    .timeline-item {
+        width: 120px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+    }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.mt-1 { margin-top: 10px; }
+.mt-2 { margin-top: 20px; }
+.mt-3 { margin-top: 30px; }
+.mb-1 { margin-bottom: 10px; }
+.mb-2 { margin-bottom: 20px; }
+.mb-3 { margin-bottom: 30px; }
+.text-accent { color: var(--color-accent); }
+.text-green { color: var(--color-secondary); }

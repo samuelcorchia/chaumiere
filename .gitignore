@@ -1,0 +1,6 @@
+src/.env
+src/vendor/
+src/node_modules/
+src/storage/*.key
+docker/mysql/data/  # Si tu as un volume MySQL local, ne le pousse pas !
+.DS_Store

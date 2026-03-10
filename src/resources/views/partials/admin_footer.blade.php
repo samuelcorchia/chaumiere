@@ -1,0 +1,1 @@
+<script>const csrfToken = '{{ csrf_token() }}';</script>
