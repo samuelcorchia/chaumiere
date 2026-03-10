@@ -227,6 +227,25 @@ class AdminController extends Controller
     }
     
     // ---------------------------------------------------------------------------
+    // Confirmer une reservation
+    // ---------------------------------------------------------------------------
+    public function confirmReservation($id)
+    {
+        try {
+            $table = Reservation::findOrFail($id); // Trouve ou génère une erreur 404
+            $table->status = 'confirmed';
+            $table->save();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            // Renvoie l'erreur SQL réelle pour comprendre le blocage
+            return response()->json([
+                'success' => false, 
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    // ---------------------------------------------------------------------------
     // Gestion quotas
     // ---------------------------------------------------------------------------
     public function quotas()

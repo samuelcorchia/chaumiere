@@ -59,7 +59,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('admin.resas.storePhone'); // Résas par téléphone
     Route::post('/reservation/web', [AdminController::class, 'storeWebReservation'])
         ->name('admin.resas.storeWeb'); // Résas par téléphone
-    Route::patch('/reservation/confirm/{id}', [AdminController::class, 'confirmOnline'])
+    Route::patch('/reservation/confirm/{id}', [AdminController::class, 'confirmReservation'])
         ->name('admin.resas.confirm'); // Confirmer résa en ligne
     Route::patch('/reservation/cancel/{id}', [AdminController::class, 'cancelReservation'])
         ->name('admin.resas.cancel'); // Annulation de résérvation

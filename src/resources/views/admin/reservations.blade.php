@@ -396,8 +396,8 @@
         updateSelectedTablesSummary();
     }
 
+    // --- RECHARGE RESULTATS PAR DATE ---
     document.getElementById('filterDate').addEventListener('change', function(e) {
-        //alert(document.getElementById('filterDate').value);
         window.location = "{{ route('admin.reservations') }}/"+document.getElementById('filterDate').value;
     });
 
@@ -439,15 +439,40 @@
     // Helpers
     function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR', {day:'numeric', month:'short'}); }
     function formatStatus(s) { return s === 'confirmed' ? 'Confirmée' : (s === 'pending' ? 'Attente' : 'Annulée'); }
+    
+    // Modal d'une reservation manuelle
     function openNewReservationModal() { 
         document.getElementById('phoneReservationForm').reset();
         selectedTables = [];
         renderTablesSelection();
         document.getElementById('newReservationModal').style.display = 'flex'; 
     }
+
+    // Fermer la modal de création d'une reservation manuelle
     function closeNewReservationModal() { document.getElementById('newReservationModal').style.display = 'none'; }
+    
+    // Fermer la modal de visualisation d'une reseravtion
     function closeModal() { document.getElementById('reservationModal').style.display = 'none'; }
 
+    // Confirmation d'une reservation en attente
+    function confirmReservation(id) {
+        if (!confirm('Confirmer cette réservation ?')) return;
+        fetch(`/admin/reservation/confirm/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                window.location.reload(); 
+            }
+        });
+    }
+
+    // Annulation d'une reservation (confirmée ou en attente)
     function cancelReservation(id) {
         if(!confirm(`Annuler cette reservation ?`)) return;
 
@@ -466,6 +491,7 @@
         });
     }
 
+    // Previsualiser les detaiuls d'une reservation 
     function viewReservation(id) {
         const r = reservations.find(res => res.id === id);
         if (!r) return;
@@ -489,6 +515,7 @@
         document.getElementById('reservationModal').style.display = 'flex';
     }
 
+    // Formatage pour l'affichage de l'emplacement (terasse ou interieur)
     function formatEmplacement(emp) {
         const labels = { 'indifferent': 'Indifférent', 'terrasse': '🌲 Terrasse', 'interieur': '🏠 Intérieur' };
         return labels[emp] || emp;
