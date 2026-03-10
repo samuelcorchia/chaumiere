@@ -1,7 +1,7 @@
 <!-- Navbar -->
 <header class="header">
     <div class="container">
-        <a href="{{ route('site.accueil') }}" class="logo">La Chaumière du Télégraphe</a>
+        <a href="{{ route('site.accueil') }}" class="logo"><img src="/images/icons/logo.png" alt="La Chaumière du Télégraphe" style="width: 40px; height: 35px;" /> La Chaumière du Télégraphe</a>
         <div class="header-right">
             <nav class="nav">
                 <a href="{{ route('site.accueil') }}" class="{{ $page == 'accueil' ? 'active' : '' }}">Accueil</a>
