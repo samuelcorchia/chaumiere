@@ -32,7 +32,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //--------------------------------------------------------------------------
-// Tout le Back-office est protégé par le middleware 'auth'
+// Tout le Back-office (les routes ci dessous) est protégé par le middleware 'auth'
 //--------------------------------------------------------------------------
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     //*************************************
@@ -41,11 +41,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/tables', [AdminController::class, 'tables'])->name('admin.tables');
     Route::post('/tables/store', [AdminController::class, 'storeTable'])->name('admin.tables.store');
     Route::patch('/tables/desactive/{id}', [AdminController::class, 'desactiveTable'])->name('admin.tables.desactive');
+    
     //*************************************
     // QUOTAS
     //*************************************
     Route::get('/quotas', [AdminController::class, 'quotas'])->name('admin.quotas');
     Route::patch('/quotas/update/', [AdminController::class, 'updateQuota'])->name('admin.quotas.updnb');
+    
     //*************************************
     // RESERVATIONS
     //*************************************
