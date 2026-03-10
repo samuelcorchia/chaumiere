@@ -116,10 +116,20 @@ font-size: 1.3rem;
     gap: 10px;
 }
 
-/*.logo::before {
-    content: '/images/icons/logo.png';
-    font-size: 1.5rem;
-}*/
+.instagram-link {
+    color: #E1306C; /* Couleur officielle Instagram */
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instagram-link:hover {
+    transform: scale(1.05);
+    color: #bc2a8d;
+}
 
 .logo:hover {
     color: var(--color-accent);
