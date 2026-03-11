@@ -6,9 +6,99 @@ use Illuminate\Http\Request;
 use App\Models\Table;
 use App\Models\Quota;
 use App\Models\Reservation;
+use App\Models\Concert;
 
 class AdminController extends Controller
 {
+    // ---------------------------------------------------------------------------
+    // Gestion des concerts
+    // ---------------------------------------------------------------------------
+    public function concerts($dateGet = null)
+    {
+        $page = 'concerts';
+
+        $concerts = empty($dateGet) ? 
+            Concert::whereDate('reserved_at', today())->orderBy('reserved_at', 'asc')->get() : 
+            Concert::whereDate('reserved_at', $dateGet)->orderBy('reserved_at', 'asc')->get();
+        
+        return view('admin.concerts', compact('concerts'));
+    }
+
+    // ---------------------------------------------------------------------------
+    // Ajout concert
+    // ---------------------------------------------------------------------------
+    public function storeConcert(Request $request)
+    {
+        try {
+            // 1. Validation : on s'assure que les noms correspondent à ce que le JS envoie
+            $validated = $request->validate([
+                name: 'required|string|max:255',
+                date: 'required|date',
+                link: 'required|string|max:255'
+            ]);
+
+            // 2. Création de l'objet et mapping colonnes
+            $concert             = new Concert();
+            $concert->name_event = $validated['name'];
+            $concert->date_event = $validated['date'] . ' ' . $validated['heure'] . ':00';
+            $concert->link_event = $validated['link'];
+            $concert->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Concert enregistrée !',
+                'id'      => $concert->id
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error("Erreur : " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => "Erreur SQL : " . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Annuler un concert
+    // ---------------------------------------------------------------------------
+    public function cancelConcert($id)
+    {
+        try {
+            $table = Concert::findOrFail($id); // Trouve ou génère une erreur 404
+            $table->active = false;
+            $table->save();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    // ---------------------------------------------------------------------------
+    // Confirmer un concert
+    // ---------------------------------------------------------------------------
+    public function confirmConcert($id)
+    {
+        try {
+            $table = ReConcertservation::findOrFail($id); // Trouve ou génère une erreur 404
+            $table->active = true;
+            $table->save();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     // ---------------------------------------------------------------------------
     // Gestion des reservations
     // ---------------------------------------------------------------------------

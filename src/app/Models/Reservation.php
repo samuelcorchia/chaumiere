@@ -20,7 +20,7 @@ class Reservation extends Model
         'source', 
         'dateresa', 
         'heure'
-];
+    ];
 
     use HasFactory;
 }

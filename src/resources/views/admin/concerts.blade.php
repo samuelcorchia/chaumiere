@@ -65,15 +65,15 @@
             <form id="concertForm">
                 <div class="form-row">
                     <label for="Nom">Nom du groupe *</label>
-                    <input type="text" id="concertNom" name="nom" required placeholder="Ex: Dupont, Famille Martin...">
+                    <input type="text" id="concertName" name="nom" required placeholder="Ex: Dupont, Famille Martin...">
                 </div>
                 <div class="form-row">
                     <label for="Date">Date *</label>
                     <input type="date" id="concertDate" name="date" required>
                 </div>
                 <div class="form-row">
-                    <label for="Link">Date *</label>
-                    <input type="date" id="concertLink" name="date" required>
+                    <label for="Link">Lien</label>
+                    <input type="text" id="concertLink" name="date" required>
                 </div>
                 <div style="margin-top: 25px; display: flex; gap: 15px;">
                     <button type="submit" class="btn btn-phone" style="flex: 1;">
@@ -129,9 +129,9 @@
         e.preventDefault();
         
         const formData = {
-            name: document.getElementById('concertNom').value,
+            name: document.getElementById('concertName').value,
             date: document.getElementById('concertDate').value,
-            heure: document.getElementById('concertLink').value, 
+            link: document.getElementById('concertLink').value, 
         };
 
         fetch("{{ route('admin.concerts.store') }}", {
