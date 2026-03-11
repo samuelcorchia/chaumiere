@@ -65,7 +65,7 @@
                 <p>Vous souhaitez vous produire à La Chaumière du Télégraphe ? Nous sommes toujours à la recherche de nouveaux talents pour animer nos soirées.</p>
                 <p>Contactez-nous par téléphone ou via notre page Facebook pour nous présenter votre projet musical.</p>
                 <div class="mt-3">
-                    <a href="https://www.facebook.com/lachaumiere91" target="_blank" class="btn">Nous contacter sur Facebook</a>
+                    <a href="https://www.facebook.com/LaChaumeduTelegraphe" target="_blank" class="btn">Nous contacter sur Facebook</a>
                 </div>
             </div>
         </div>
