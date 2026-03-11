@@ -35,6 +35,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Tout le Back-office (les routes ci dessous) est protégé par le middleware 'auth'
 //--------------------------------------------------------------------------
 Route::middleware(['auth'])->prefix('admin')->group(function () {
+    
+    //*************************************
+    // CONCERTS
+    //*************************************
+    Route::get('/concerts', [AdminController::class, 'concerts'])->name('admin.concerts');
+    Route::post('/concerts/store', [AdminController::class, 'storeConcerts'])->name('admin.concerts.store');
+    Route::patch('/concerts/desactive/{id}', [AdminController::class, 'desactiveTable'])->name('admin.concerts.desactive');
+    
     //*************************************
     // TABLES
     //*************************************
