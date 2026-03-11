@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Concert extends Model
 {
-    /** @use HasFactory<\Database\Factories\ConcertFactory> */
+    protected $table = 'concerts';
+    protected $fillable = [
+        'name_event', 
+        'date_event', 
+        'link_event'
+    ];
+    
     use HasFactory;
 }
