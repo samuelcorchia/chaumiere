@@ -11,7 +11,8 @@ class Concert extends Model
     protected $fillable = [
         'name_event', 
         'date_event', 
-        'link_event'
+        'link_event',
+        'type_event'
     ];
     
     use HasFactory;
