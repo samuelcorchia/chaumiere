@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConcertController;
 
 //--------------------------------------------------------------------------
 // Pages du site
@@ -11,7 +12,6 @@ $pages = [
     'presentation' => ['/presentation', 'presentation', '02'],
     'infos' => ['/infos', 'infos', '01'],
     'reservations' => ['/reservations', 'reservations', '03'],
-    'concerts' => ['/concerts', 'concerts', '06'],
     'histoire' => ['/histoire', 'histoire', '04'],
     'privatisation' => ['/privatisation', 'privatisation', '05'],
 ];
@@ -23,6 +23,11 @@ foreach ($pages as $name => [$url, $view, $img]) {
         ]);
     })->name("site.$name");
 }
+
+//--------------------------------------------------------------------------
+// Page des concerts
+//--------------------------------------------------------------------------
+Route::get('/concerts', [ConcertController::class, 'index'])->name('site.concerts');
 
 //--------------------------------------------------------------------------
 // Page de login accessible à tous

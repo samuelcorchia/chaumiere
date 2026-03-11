@@ -13,7 +13,7 @@
             <span id="quotaDate">📅 <input type="date" id="filterDate" placeholder="Filtrer par date" value="{{ $dateGet ?? \Carbon\Carbon::now()->format('Y-m-d') }}" /></span>
         </div>
         
-        <!-- Reservations Table -->
+        <!-- Concerts Table -->
         <div class="admin-table-container">
             <div class="admin-table-header">
                 <h2 style="font-size: 2em;">Liste des concerts</h2>
@@ -24,6 +24,7 @@
                     <th>Date</th>
                     <th>Heure</th>
                     <th>Nom</th>
+                    <th>Type</th>
                     <th>Lien</th>
                     <th>Statut</th>
                     <th>Actions</th>
@@ -35,10 +36,13 @@
                     <td><div class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($concert->date_event)->format('d/m/Y') }}</div></td>
                     <td><div class="text-sm text-gray-900">{{ \Carbon\Carbon::parse($concert->date_event)->format('H:i') }}</div></td>
                     <td><div class="text-sm font-medium text-gray-900">{{ $concert->name_event }}</div></td>
+                    <td><div class="text-sm font-medium text-gray-900">{{ $concert->type_event }}</div></td>
                     <td>{{ $concert->link_event }}</td>
-                    <td><span class="status-badge {{ $concert->status }}">{{ ucfirst($reservation->status) }}</span></td>
+                    <td><span class="status-badge {{ $concert->active ? 'confirmed' : 'pending' }}">{{ $concert->active ? 'Confirmé' : 'En attente' }}</span></td>
                     <td>
-                        <button class="action-btn cancel" onclick="confirmConcert({{ $concert->id }})">Annuler</button>
+                        @if(!$concert->active)
+                            <button class="action-btn confirm" onclick="confirmConcert({{ $concert->id }})">Confirmer</button>
+                        @endif
                         <button class="action-btn cancel" onclick="cancelConcert({{ $concert->id }})">Annuler</button>
                         <!-- <button class="action-btn view" onclick="viewReservation({{ $concert->id }})">Voir</button> -->
                     </td>
@@ -63,17 +67,21 @@
             </div>
             
             <form id="concertForm">
-                <div class="form-row">
-                    <label for="Nom">Nom du groupe *</label>
-                    <input type="text" id="concertName" name="nom" required placeholder="Ex: Dupont, Famille Martin...">
+                <div class="form-group">
+                    <label for="eventName">Nom du groupe *</label>
+                    <input type="text" id="eventName" name="eventName" required placeholder="Spams...">
                 </div>
-                <div class="form-row">
-                    <label for="Date">Date *</label>
-                    <input type="date" id="concertDate" name="date" required>
+                <div class="form-group">
+                    <label for="TypeEvent">Type de musique *</label>
+                    <input type="text" id="eventType" name="TypeEvent" required placeholder="Rock...">
                 </div>
-                <div class="form-row">
-                    <label for="Link">Lien</label>
-                    <input type="text" id="concertLink" name="date" required>
+                <div class="form-group">
+                    <label for="eventDate">Date *</label>
+                    <input type="date" id="eventDate" name="eventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventLink">Lien</label>
+                    <input type="text" id="eventLink" name="eventLink">
                 </div>
                 <div style="margin-top: 25px; display: flex; gap: 15px;">
                     <button type="submit" class="btn btn-phone" style="flex: 1;">
@@ -129,9 +137,10 @@
         e.preventDefault();
         
         const formData = {
-            name: document.getElementById('concertName').value,
-            date: document.getElementById('concertDate').value,
-            link: document.getElementById('concertLink').value, 
+            name_event: document.getElementById('eventName').value,
+            type_event: document.getElementById('eventType').value,
+            date_event: document.getElementById('eventDate').value,
+            link_event: document.getElementById('eventLink').value 
         };
 
         fetch("{{ route('admin.concerts.store') }}", {
@@ -160,14 +169,14 @@
     
     // Modal d'une reservation manuelle
     function openNewConcertModal() { 
-        document.getElementById('phoneReservationForm').reset();
-        selectedTables = [];
-        renderTablesSelection();
-        document.getElementById('newReservationModal').style.display = 'flex'; 
+        document.getElementById('concertForm').reset();
+        //selectedTables = [];
+        //renderTablesSelection();
+        document.getElementById('openNewConcertModal').style.display = 'flex'; 
     }
 
     // Fermer la modal de création d'une reservation manuelle
-    function closeNewConcertModal() { document.getElementById('newReservationModal').style.display = 'none'; }
+    function closeNewConcertModal() { document.getElementById('openNewConcertModal').style.display = 'none'; }
     
     // Fermer la modal de visualisation d'une reseravtion
     /* 

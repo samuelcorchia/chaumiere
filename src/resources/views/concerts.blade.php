@@ -8,17 +8,17 @@
                 <h2>Prochains Concerts</h2>
             </div>
             <div class="concerts-list">
-                <!-- Concert 1 -->
-                <div class="concert-card">
+                @forelse($concerts as $concert)
+                    <div class="concert-card">
                     <div class="concert-date">
-                        <span class="day">21</span>
-                        <span class="month">Mars</span>
+                        <span class="day">{{ \Carbon\Carbon::parse($concert->date_event)->format('d') }}</span>
+                        <span class="month">{{ \Carbon\Carbon::parse($concert->date_event)->format('F') }}</span>
                     </div>
                     <div class="concert-info">
-                        <h4>Folk Yoo</h4>
-                        <p class="genre">Folk Blues</p>
+                        <h4>{{ $concert->name_event}}</h4>
+                        <p class="genre">{{ $concert->type_event}}</p>
                     </div>
-                    <a href="https://youtu.be/9IIJmYWXuVE?si=c6N180-EX1oZD9Pr" target="_blank" class="concert-link">
+                    <a href="{{ $concert->link_event}}" target="_blank" class="concert-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                             <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
@@ -26,44 +26,9 @@
                         Écouter
                     </a>
                 </div>
-
-                <!-- Concert 2 -->
-                <div class="concert-card">
-                    <div class="concert-date">
-                        <span class="day">4</span>
-                        <span class="month">Avril</span>
-                    </div>
-                    <div class="concert-info">
-                        <h4>Les Pockets</h4>
-                        <p class="genre">Pop Rock Swing</p>
-                    </div>
-                    <a href="https://youtu.be/uYYT_T3U-GU?si=9VMH2jPQ1WDiRPh_" target="_blank" class="concert-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                            <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
-                        </svg>
-                        Écouter
-                    </a>
-                </div>
-
-                <!-- Concert 3 -->
-                <div class="concert-card">
-                    <div class="concert-date">
-                        <span class="day">18</span>
-                        <span class="month">Avril</span>
-                    </div>
-                    <div class="concert-info">
-                        <h4>Les Spams</h4>
-                        <p class="genre">Reprises Réarrangées</p>
-                    </div>
-                    <a href="https://youtu.be/i4i_moUeAg0?si=mTRw6vrQsphQO_Q4" target="_blank" class="concert-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                            <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
-                        </svg>
-                        Écouter
-                    </a>
-                </div>
+                @empty
+                    <p class="text-muted">Aucun concert à venir</p>
+                @endforelse
             </div>
         </div>
     </section>

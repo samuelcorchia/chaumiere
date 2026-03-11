@@ -17,11 +17,12 @@ class AdminController extends Controller
     {
         $page = 'concerts';
 
-        $concerts = empty($dateGet) ? 
+        $concerts = Concert::all();
+        /*empty($dateGet) ? 
             Concert::whereDate('reserved_at', today())->orderBy('reserved_at', 'asc')->get() : 
             Concert::whereDate('reserved_at', $dateGet)->orderBy('reserved_at', 'asc')->get();
-        
-        return view('admin.concerts', compact('concerts'));
+        */
+        return view('admin.concerts', compact('page', 'concerts'));
     }
 
     // ---------------------------------------------------------------------------
@@ -32,16 +33,18 @@ class AdminController extends Controller
         try {
             // 1. Validation : on s'assure que les noms correspondent à ce que le JS envoie
             $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'date' => 'required|date',
-                'link' => 'required|string|max:255'
+                'name_event' => 'required|string|max:255',
+                'date_event' => 'required|date',
+                'link_event' => 'required|string|max:255',
+                'type_event' => 'required|string|max:255',
             ]);
 
             // 2. Création de l'objet et mapping colonnes
             $concert             = new Concert();
-            $concert->name_event = $validated['name'];
-            $concert->date_event = $validated['date'] . ' ' . $validated['heure'] . ':00';
-            $concert->link_event = $validated['link'];
+            $concert->name_event = $validated['name_event'];
+            $concert->date_event = $validated['date_event'] . ' 21:00:00';
+            $concert->link_event = $validated['link_event'];
+            $concert->type_event = $validated['type_event'];
             $concert->save();
 
             return response()->json([
@@ -87,7 +90,7 @@ class AdminController extends Controller
     public function confirmConcert($id)
     {
         try {
-            $table = ReConcertservation::findOrFail($id); // Trouve ou génère une erreur 404
+            $table = Concert::findOrFail($id); // Trouve ou génère une erreur 404
             $table->active = true;
             $table->save();
             return response()->json(['success' => true]);

@@ -13,7 +13,13 @@ class ConcertController extends Controller
      */
     public function index()
     {
-        //
+        $concerts = Concert::where('active', true)->orderBy('date_event', 'asc')->get();
+
+        return view('concerts', [
+            'page' => 'concerts',
+            'headerbg' => "/images/bg/06.jpg", 
+            'concerts' => $concerts
+        ]);
     }
 
     /**
