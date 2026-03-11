@@ -40,8 +40,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // CONCERTS
     //*************************************
     Route::get('/concerts', [AdminController::class, 'concerts'])->name('admin.concerts');
-    Route::post('/concerts/store', [AdminController::class, 'storeConcerts'])->name('admin.concerts.store');
-    Route::patch('/concerts/desactive/{id}', [AdminController::class, 'desactiveTable'])->name('admin.concerts.desactive');
+    Route::get('/concerts/{date}', [AdminController::class, 'concerts']) ->name('admin.concerts');
+    Route::post('/concerts/store', [AdminController::class, 'storeConcert'])->name('admin.concerts.store');
+    Route::patch('/concerts/confirm/{id}', [AdminController::class, 'confirmConcert'])->name('admin.concerts.confirm');
+    Route::patch('/concerts/cancel/{id}', [AdminController::class, 'cancelConcert'])->name('admin.concerts.cancel');
     
     //*************************************
     // TABLES
