@@ -136,7 +136,7 @@
             </div>
             <div class="photos-grid">
                 <div class="photo-item large">
-                    <img src="/images/exterieur/terasse.jpg" alt="Ambiance">    
+                    <img src="/images/exterieur/terrasse.jpg" alt="Ambiance">    
                 </div>
                 <div class="photo-item">
                     <img src="/images/bg/02.jpg" alt="Vue du restaurant">

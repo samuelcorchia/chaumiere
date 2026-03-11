@@ -103,7 +103,7 @@
                     </ul>
                 </div>
                 <div class="presentation-image">
-                    <img src="/images/exterieur/terasse.jpg" alt="Vue de La Chaumière">
+                    <img src="/images/exterieur/terrasse.jpg" alt="Vue de La Chaumière">
                 </div>
             </div>
         </div>
