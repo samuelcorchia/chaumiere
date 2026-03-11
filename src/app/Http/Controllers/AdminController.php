@@ -32,9 +32,9 @@ class AdminController extends Controller
         try {
             // 1. Validation : on s'assure que les noms correspondent à ce que le JS envoie
             $validated = $request->validate([
-                name: 'required|string|max:255',
-                date: 'required|date',
-                link: 'required|string|max:255'
+                'name': 'required|string|max:255',
+                'date': 'required|date',
+                'link': 'required|string|max:255'
             ]);
 
             // 2. Création de l'objet et mapping colonnes
