@@ -11,8 +11,10 @@
                 @forelse($concerts as $concert)
                     <div class="concert-card">
                     <div class="concert-date">
-                        <span class="day">{{ \Carbon\Carbon::parse($concert->date_event)->format('d') }}</span>
-                        <span class="month">{{ \Carbon\Carbon::parse($concert->date_event)->format('F') }}</span>
+                        <span class="day">
+                            {{ \Carbon\Carbon::parse($concert->date_event)->format('d') }}/{{ \Carbon\Carbon::parse($concert->date_event)->format('m') }}
+                        </span>
+                        <!-- <span class="month">{{ \Carbon\Carbon::parse($concert->date_event)->format('F') }}</span> -->
                     </div>
                     <div class="concert-info">
                         <h4>{{ $concert->name_event}}</h4>
