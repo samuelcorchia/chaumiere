@@ -19,8 +19,8 @@
     --color-overlay-dark: rgba(0, 0, 0, 0.5);
     --gradient-forest: linear-gradient(135deg, #2d5016 0%, #4a7c23 50%, #6b8e3a 100%);
     --gradient-warm: linear-gradient(135deg, #d4a853 0%, #c49842 100%);
-    --font-heading: 'Playfair Display', Georgia, serif;
-    --font-body: 'Source Sans Pro', 'Segoe UI', sans-serif;
+    --font-heading: 'Fraunces', serif;
+    --font-body: 'Montserrat', sans-serif;
     --transition: all 0.3s ease;
     --shadow-soft: 0 10px 40px rgba(45, 80, 22, 0.15);
     --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.12);
