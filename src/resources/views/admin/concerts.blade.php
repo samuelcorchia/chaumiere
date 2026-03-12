@@ -167,19 +167,15 @@
     // Helpers
     function formatDate2(d) {
         const date  = new Date(d);
-        const jour  = String(date.getDate()).padStart(2, '0');
-        const mois  = String(date.getMonth() + 1).padStart(2, '0'); // +1 car janvier = 0
-        const annee = date.getFullYear();
-        var newDate = `${annee}-${mois}-${jour}`;
-        console.log(newDate);
-        return newDate;
+        const day   = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 car janvier = 0
+        const year  = date.getFullYear();
+        
+        return [year, month, day].join('-');return newDate;
     }
-    function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR', {day:'numeric', month:'short'}); }
-    function formatStatus(s) { return s === 'confirmed' ? 'Confirmée' : (s === 'pending' ? 'Attente' : 'Annulée'); }
     
     // Modal ajout/update nouveau concert
     function openNewConcertModal(id) { 
-        //alert(id + 'dans modal');
         // Add (on vide les champs)
         if (id === 0) { 
             document.getElementById('concertForm').reset(); 
