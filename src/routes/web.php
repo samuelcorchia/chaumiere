@@ -53,15 +53,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     //*************************************
     // TABLES
     //*************************************
-    Route::get('/tables', [AdminController::class, 'tables'])->name('admin.tables');
-    Route::post('/tables/store', [AdminController::class, 'storeTable'])->name('admin.tables.store');
-    Route::patch('/tables/desactive/{id}', [AdminController::class, 'desactiveTable'])->name('admin.tables.desactive');
+    Route::get('/tables', [AdminController::class, 'tables'])->name('admin.tables'); // Lister les tables
+    Route::post('/tables/store/{id?}', [AdminController::class, 'storeTable'])->name('admin.tables.store'); // Ajouter une table
+    Route::patch('/tables/desactive/{id}', [AdminController::class, 'desactiveTable'])->name('admin.tables.desactive'); // Desactiver une table
     
     //*************************************
     // QUOTAS
     //*************************************
-    Route::get('/quotas', [AdminController::class, 'quotas'])->name('admin.quotas');
-    Route::patch('/quotas/update/', [AdminController::class, 'updateQuota'])->name('admin.quotas.updnb');
+    Route::get('/quotas', [AdminController::class, 'quotas'])->name('admin.quotas'); // Lister queota
+    Route::patch('/quotas/update/{nb}', [AdminController::class, 'updateQuota'])->name('admin.quotas.update');
     
     //*************************************
     // RESERVATIONS
@@ -74,8 +74,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('admin.resas.storePhone'); // Résas par téléphone
     Route::post('/reservation/web', [AdminController::class, 'storeWebReservation'])
         ->name('admin.resas.storeWeb'); // Résas par téléphone
-    Route::patch('/reservation/confirm/{id}', [AdminController::class, 'confirmReservation'])
-        ->name('admin.resas.confirm'); // Confirmer résa en ligne
-    Route::patch('/reservation/cancel/{id}', [AdminController::class, 'cancelReservation'])
-        ->name('admin.resas.cancel'); // Annulation de résérvation
+   
+    Route::patch('/reservation/update/{id}/{action}', [AdminController::class, 'updateReservationStatus'])
+        ->name('admin.resas.updateStatus')
+        ->where('action', 'confirm|cancel'); // Confirmer ou annuler une reservation
 });

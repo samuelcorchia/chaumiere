@@ -346,28 +346,19 @@ class AdminController extends Controller
     public function quotas()
     {
         $page      = 'quotas';
-        $oQuota    = Quota::all()->first(  );
+        $quota     = Quota::all()->first();
         $iNbTables = Table::where('active', true)->count();
 
-        return view('admin.quotas', compact('page', 'oQuota', 'iNbTables'));
+        return view('admin.quotas', compact('page', 'quota', 'iNbTables'));
     }
 
     // ---------------------------------------------------------------------------
     // Modification quotas
     // ---------------------------------------------------------------------------
-    public function updateQuota(Request $request)
+    public function updateQuota($nb)
     {
-        try {
-            $table = Quota::findOrFail($request->id); // Trouve ou génère une erreur 404
-            $table->nb = $request->nb;
-            $table->save();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            // Renvoie l'erreur SQL réelle pour comprendre le blocage
-            return response()->json([
-                'success' => false, 
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        Quota::first()->update(['nb' => $nb]); 
+        
+        return response()->json(['success' => true]);
     }
 }
