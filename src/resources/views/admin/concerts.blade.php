@@ -3,15 +3,15 @@
 @section('content')
     <div class="container" style="margin-top: 5em;">            
         <div class="admin-actions">
-            <button class="btn btn-phone" onclick="openNewConcertModal()">
+            <button class="btn btn-phone" onclick="openNewConcertModal(0)">
                 Ajouter concert
             </button>
         </div>
         
         <!-- Filtre par mois (Todo)-->
-        <div class="quota-text">
+        <!-- <div class="quota-text">
             <span id="quotaDate">📅 <input type="date" id="filterDate" placeholder="Filtrer par date" value="{{ $dateGet ?? \Carbon\Carbon::now()->format('Y-m-d') }}" /></span>
-        </div>
+        </div>-->
         
         <!-- Concerts Table -->
         <div class="admin-table-container">
@@ -44,7 +44,7 @@
                             <button class="action-btn confirm" onclick="confirmConcert({{ $concert->id }})">Confirmer</button>
                         @endif
                         <button class="action-btn cancel" onclick="cancelConcert({{ $concert->id }})">Annuler</button>
-                        <!-- <button class="action-btn view" onclick="viewReservation({{ $concert->id }})">Voir</button> -->
+                        <button class="action-btn view" onclick="viewConcert({{ $concert->id }})">Voir/Editer</button>
                     </td>
                 </tr>
             @endforeach
@@ -72,12 +72,12 @@
                     <input type="text" id="eventName" name="eventName" required placeholder="Spams...">
                 </div>
                 <div class="form-group">
-                    <label for="TypeEvent">Type de musique *</label>
-                    <input type="text" id="eventType" name="TypeEvent" required placeholder="Rock...">
+                    <label for="eventType">Type de musique *</label>
+                    <input type="text" id="eventType" name="eventType" required placeholder="Rock...">
                 </div>
                 <div class="form-group">
                     <label for="eventDate">Date *</label>
-                    <input type="date" id="eventDate" name="eventDate" required>
+                    <input type="date" id="eventDate" name="eventDate" required value="">
                 </div>
                 <div class="form-group">
                     <label for="eventLink">Lien</label>
@@ -112,9 +112,10 @@
     -->
 <script>
     // 1. Au chargement de la page
+    // Initialisation des données depuis Laravel
+    let concerts = @json($concerts); 
+    // DataTables
     $(document).ready(function() {
-        const dateInput = document.getElementById('phoneDate');
-        if(dateInput) dateInput.min = new Date().toISOString().split('T')[0];
         $('#concertsTable').DataTable({
             "paging": false,
             "lengthChange": false,
@@ -128,9 +129,9 @@
 
     
     // --- RECHARGE RESULTATS PAR DATE ---
-    document.getElementById('filterDate').addEventListener('change', function(e) {
+    /*document.getElementById('filterDate').addEventListener('change', function(e) {
         window.location = "{{ route('admin.concerts') }}/"+document.getElementById('filterDate').value;
-    });
+    });*/
 
     // --- GESTION DU FORMULAIRE (ENVOI LARAVEL) ---
     document.getElementById('concertForm').addEventListener('submit', function(e) {
@@ -164,14 +165,33 @@
     });
 
     // Helpers
+    function formatDate2(d) {
+        const date  = new Date(d);
+        const jour  = String(date.getDate()).padStart(2, '0');
+        const mois  = String(date.getMonth() + 1).padStart(2, '0'); // +1 car janvier = 0
+        const annee = date.getFullYear();
+        var newDate = `${annee}-${mois}-${jour}`;
+        console.log(newDate);
+        return newDate;
+    }
     function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR', {day:'numeric', month:'short'}); }
     function formatStatus(s) { return s === 'confirmed' ? 'Confirmée' : (s === 'pending' ? 'Attente' : 'Annulée'); }
     
-    // Modal d'une reservation manuelle
-    function openNewConcertModal() { 
-        document.getElementById('concertForm').reset();
-        //selectedTables = [];
-        //renderTablesSelection();
+    // Modal ajout/update nouveau concert
+    function openNewConcertModal(id) { 
+        //alert(id + 'dans modal');
+        // Add (on vide les champs)
+        if (id === 0) { 
+            document.getElementById('concertForm').reset(); 
+        // Update (on preremplie les champs)
+        } else {
+            const event = concerts.find(res => res.id === id);
+            if (!event) return;
+            $("#eventName").val(event.name_event);
+            $("#eventType").val(event.type_event);
+            $("#eventDate").val(formatDate2(event.date_event));
+            $("#eventLink").val(event.link_event);
+        }
         document.getElementById('openNewConcertModal').style.display = 'flex'; 
     }
 
@@ -221,29 +241,10 @@
     }
 
 
-    // Previsualiser les detaiuls d'une reservation 
-    /*
-    function viewReservation(id) {
-        const r = reservations.find(res => res.id === id);
-        if (!r) greturn;
-            document.getElementById('modalContent').innerHTML = `
-            <div style="display: grid; gap: 15px;">
-                <div><strong>Nom :</strong> ${r.nom}</div>
-                <div><strong>Date :</strong> ${formatDate(r.dateresa)}</div>
-                <div><strong>Heure :</strong> ${r.heure}</div>
-                <div><strong>Personnes :</strong> ${r.guest_count}</div>
-                <div><strong>Tables :</strong> ${r.tables_id || '—'}</div>
-                <div><strong>Téléphone :</strong> ${r.phone || '—'}</div>
-                <div><strong>Email :</strong> ${r.mail || '—'}</div>
-                <div><strong>Emplacement :</strong> ${formatEmplacement(r.emplacement)}</div>
-                <div><strong>Source :</strong> <span class="source-badge ${r.source || 'online'}">${r.source === 'phone' ? '📞 Téléphone' : '🌐 En ligne'}</span></div>
-                <div><strong>Statut :</strong> <span class="status-badge ${r.status}">${formatStatus(r.status)}</span></div>
-                ${r.remarque ? `<div><strong>Remarques :</strong><br>${r.remarque}</div>` : ''}
-                <div><strong>Créée le :</strong> ${new Date(r.created_at).toLocaleString('fr-FR')}</div>
-            </div>
-        `;
-        document.getElementById('reservationModal').style.display = 'flex';
+    // Previsualiser et/ou modifier les infos d'un concert 
+    function viewConcert(id) {
+        openNewConcertModal(id);
     }
-    */
+
 </script>
 @endsection
