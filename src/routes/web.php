@@ -61,7 +61,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // QUOTAS
     //*************************************
     Route::get('/quotas', [AdminController::class, 'quotas'])->name('admin.quotas'); // Lister queota
-    Route::patch('/quotas/update/{nb}', [AdminController::class, 'updateQuota'])->name('admin.quotas.update');
+    Route::patch('/quotas/update', [AdminController::class, 'updateQuota'])->name('admin.quotas.update');
     
     //*************************************
     // RESERVATIONS
