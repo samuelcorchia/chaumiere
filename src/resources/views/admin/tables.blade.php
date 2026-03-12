@@ -5,14 +5,14 @@
         <h3>🪑 Configuration des Tables</h3>
         <p style="color: var(--color-text-light);">Définissez vos tables avec leur capacité. Vous pourrez ensuite associer plusieurs tables à une même réservation.</p>    
         <div class="add-table-form">
-            <input type="text" id="newTableNumber" placeholder="N° Table (ex: T1)" style="width: 120px;">
-            <input type="number" id="newTableCapacity" placeholder="Places" min="1" max="20" style="width: 100px;">
+            <input type="text" id="tableName" placeholder="N° Table (ex: T1)" style="width: 120px;">
+            <input type="number" id="tableCapacity" placeholder="Nb Places" min="1" max="20" style="width: 100px;">
             <button class="btn" onclick="addTable()">+ Ajouter table</button>
         </div>
         <div class="tables-grid" id="tablesGrid">
             @foreach($aTablesList as $oTable)    
                 <div id="table-{{ $oTable->id }}" class="table-item" onclick="desactiveTable({{ $oTable->id }}, '{{ $oTable->name }}')">
-                    <div class="table-number">{{ $oTable->name }}</div>
+                    <div id="table-name" class="table-number">{{ $oTable->name }}</div>
                     <div class="table-capacity">{{ $oTable->capacity }} places</div>
                 </div>
             @endforeach  
@@ -24,36 +24,36 @@
     </div>
     <script>
         // ADD TABLE
-        function addTable() {
-            let tableName = document.getElementById('newTableNumber').value;
-            let tableCapacity = document.getElementById('newTableCapacity').value;
+        function addTable() {$
+            let tableName     = $('#tableName').val();
+            let tableCapacity = $('#tableCapacity').val();
             
-            if (!tableName || !tableCapacity) {
-                alert('Veuillez remplir le numéro et la capacité de la table.');
-                return;
-            }
+            if(!tableName || !tableCapacity) {alert('Veuillez remplir le numéro et la capacité de la table.');return;}
             
-            fetch("{{ route('admin.tables.store') }}", {
+            let url = "{{ route('admin.tables.store', ['name' => 'NAME_HERE', 'capacity' => 'CAPACITY_HERE']) }}";
+            url = url.replace('NAME_HERE', tableName).replace('CAPACITY_HERE', tableCapacity);
+            fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": csrfToken
-                },
-                body: JSON.stringify({ name: tableName, capacity: tableCapacity })
+                }
             })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
-                if(data.success){
-                    location.reload();            
+                if(data.success) {
+                    alert('Table ajoutée !');
+                    location.reload(); 
                 }
             });
         }
 
         // DESACTIVATE TABLE
-        function desactiveTable(id, name) {
-            if(!confirm(`Confirmer la descativation de la table ${name} ?`)) return;
-
-            fetch(`/admin/tables/desactive/${id}`, {
+        function desactiveTable(id) {
+            if(!confirm('Confirmer la descativation de la table ' + $('#table-name').val() + '?')) return;
+            alert(id);
+            return;
+            fetch(`{{ route('admin.resas.updateStatus', ['id' => ${id}, 'action' => '${action}']) }}`, {
                 method: 'PATCH',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
@@ -63,7 +63,8 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    location.reload(); // On rafraîchit pour voir la table disparaître
+                    $('#table-'+id').hide();
+                    //location.reload(); // On rafraîchit pour voir la table disparaître
                 }
             });
         }

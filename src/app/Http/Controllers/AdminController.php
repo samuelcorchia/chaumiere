@@ -272,15 +272,16 @@ class AdminController extends Controller
     // ---------------------------------------------------------------------------
     public function storeTable(Request $request)
     {
+        // valider les données
+        $request->validate([
+            'name' => 'required',
+            'capacity' => 'required|integer'
+        ]);
         $table = Table::create([
             'name' => $request->name, 
             'capacity' => $request->capacity
         ]);
-        
-        return response()->json([
-            'success' => true, 
-            'table' => $table
-        ]);
+        return response()->json(['success' => true, 'table' => $table], 201);
     }
 
     // ---------------------------------------------------------------------------
@@ -355,10 +356,16 @@ class AdminController extends Controller
     // ---------------------------------------------------------------------------
     // Modification quotas
     // ---------------------------------------------------------------------------
-    public function updateQuota($nb)
+    public function updateQuota(Request $request) 
     {
-        Quota::first()->update(['nb' => $nb]); 
-        
-        return response()->json(['success' => true]);
+        $request->validate(['nb' => 'required|integer|min:0']);
+
+        $quota = Quota::first();
+        if ($quota) {
+            $quota->update(['nb' => $request->nb]);
+        } else {
+            Quota::create(['nb' => $request->nb]);
+        }
+        return response()->json(['success' => true], 200);
     }
 }

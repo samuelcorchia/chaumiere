@@ -19,17 +19,24 @@
     </div>
     <script>
         function saveQuota() {
-            let nb = document.getElementById('nbQuota').value;
+            let nb = $('#nbQuota').val();
             if(!nb || !confirm('Confirmer la modification ?')) return;  
-            
-            let url = "{{ route('admin.quotas.update', ['nb' => 'NB_HERE']) }}";
-            url = url.replace('NB_HERE', nb);
-
-            fetch(url, {
+             fetch({{ route('admin.quotas.update') }}, {
                 method: 'PATCH',
-                headers: { 'X-CSRF-TOKEN': csrfToken }
+                    headers: {
+                    "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken
+                },
+                // On envoie la donnée ici !
+                body: JSON.stringify({ nb: nb }) 
             })
-            .then(res => res.ok);// && location.reload() 
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    alert('Quota modifié !');
+                    location.reload(); 
+                }
+            }); 
         }
     </script>
 @endsection
