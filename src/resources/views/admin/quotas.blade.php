@@ -7,38 +7,29 @@
         <div style="max-width: 300px; margin-top: 25px;">
             <div class="setting-card">
                 <label>🌐 Réservations en ligne max / jour</label>
-                <input type="hidden" id="idQuota" value="{{ $oQuota->id }}" />
-                <input type="number" id="nbQuota" min="0" max="100" value="{{ $oQuota->nb }}" style="width: 120px;">
+                <input type="number" id="nbQuota" min="0" max="100" value="{{ $quota->nb }}" style="width: 120px;">
                 <span style="font-size: 19px; font-weight: bold;">/</span><input type="number" value="{{ $iNbTables }}" style="width: 120px;" disabled>
                 <small>Quota journalier de réservations web</small>
             </div>
         </div>
                 
         <div style="margin-top: 20px;">
-            <button class="btn" onclick="saveQuota({{ $oQuota->id }})">💾 Enregistrer</button>
+            <button class="btn" onclick="saveQuota()">💾 Enregistrer</button>
         </div>
     </div>
     <script>
-        function saveQuota(id) {
-            if(!confirm(`Confirmer la modification du quota ?`)) return;
+        function saveQuota() {
+            let nb = document.getElementById('nbQuota').value;
+            if(!nb || !confirm('Confirmer la modification ?')) return;  
+            
+            let url = "{{ route('admin.quotas.update', ['nb' => 'NB_HERE']) }}";
+            url = url.replace('NB_HERE', nb);
 
-            let nbQuota = document.getElementById('nbQuota').value;
-            let idQuota = document.getElementById('idQuota').value;
-
-            fetch("{{ route('admin.quotas.updnb') }}", {
+            fetch(url, {
                 method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Content-Type': 'application/json'
-                }, 
-                body: JSON.stringify({ id: idQuota, nb: nbQuota })
+                headers: { 'X-CSRF-TOKEN': csrfToken }
             })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    location.reload(); // On rafraîchit pour voir la table disparaître
-                }
-            });
+            .then(res => res.ok);// && location.reload() 
         }
     </script>
 @endsection
