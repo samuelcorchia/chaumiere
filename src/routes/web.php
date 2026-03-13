@@ -80,6 +80,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     
     Route::post('/concerts/store', [AdminController::class, 'storeConcert'])
         ->name('admin.concerts.store'); // Ajouter un concert
+    Route::patch('/concerts/update', [AdminController::class, 'storeConcert'])
+        ->name('admin.concerts.update'); // Modifier un concert
     Route::patch('/concerts/updateStatus', [AdminController::class, 'updateConcertStatus'])
         ->name('admin.concerts.updateStatus'); // Confirmer ou annuler un concert
 });

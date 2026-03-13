@@ -108,7 +108,7 @@ class AdminController extends Controller
             ]);
 
             // 2. Création de l'objet et mapping colonnes
-            $concert             = new Concert();
+            $concert             = !empty($request->id_event) ? Concert::findOrFail($request->id_event) : new Concert();
             $concert->name_event = $validated['name_event'];
             $concert->date_event = $validated['date_event'] . ' 21:00:00';
             $concert->link_event = $validated['link_event'];
@@ -117,8 +117,8 @@ class AdminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Concert enregistrée !',
-                'id'      => $concert->id
+                'message' => !empty($request->id) ? 'Concert modifié' : 'Concert enregistré',
+                'table'      => $concert
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([

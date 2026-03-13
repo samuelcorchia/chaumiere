@@ -3,7 +3,7 @@
 @section('content')
     <div class="container" style="margin-top: 5em;">            
         <div class="admin-actions">
-            <button class="btn btn-phone" onclick="openConcertModal(0)">
+            <button class="btn btn-phone" onclick="addConcert()">
                 Ajouter concert
             </button>
         </div>
@@ -41,7 +41,7 @@
                     <td><div class="text-sm"><span class="status-badge {{ $concert->active ? 'confirmed' : 'pending' }}">{{ $concert->active ? 'Confirmé' : 'En attente' }}</span></div></td>
                     <td>
                         <div class="text-sm">
-                            <button class="action-btn view" onclick="viewConcert({{ $concert->id }})">Voir/Editer</button>
+                            <button class="action-btn view" onclick="editConcert({{ $concert->id }})">Voir/Editer</button>
                             @if($concert->active)
                                 <button class="action-btn cancel" onclick="updateStatusConcert({{ $concert->id }}, `{{ $concert->name_event }}`, 'cancel')">Annuler</button>
                             @else
@@ -66,7 +66,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modal-title"></h3>
-                <button class="modal-close" onclick="closeConcertModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             
             <form id="concertForm">
@@ -87,12 +87,12 @@
                     <input type="text" id="eventLink" name="eventLink">
                 </div>
                 <div style="margin-top: 25px; display: flex; gap: 15px;">
-                    <input type="hidden" name="eventId" name="eventId" /> 
-                    <input type="hidden" name="method-form" />
+                    <input type="hidden" id="eventId" name="eventId" /> 
+                    <input type="hidden" id="method-form" />
                     <button type="submit" class="btn btn-phone" style="flex: 1;">
                         <span id="button-text"></span>
                     </button>
-                    <button type="button" class="btn btn-outline" onclick="closeConcertModal()">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">
                         Annuler
                     </button>
                 </div>
@@ -117,29 +117,34 @@
     });
     
     // --- GESTION DU FORMULAIRE (ENVOI LARAVEL) ---
-    $("#concertForm").on("submit", function(){
-        e.preventDefault();
+    $("#concertForm").on("submit", function() {
         const formData = {
             name_event: $('#eventName').val(),
             type_event: $('#eventType').val(),
             date_event: $('#eventDate').val(),
             link_event: $('#eventLink').val(),
-            id_event: $('#eventId').val()
+            id_event:   $('#eventId').val()
         };
-        alert($('#method-form').val());
-        fetch("{{ route('admin.concerts.store') }}", {
-            method: "POST",
+        let themethod = "POST";
+        let url = "{{ route('admin.concerts.store') }}";
+        if($('#method-form').val() === 'PATCH') {
+            themethod = "PATCH";
+            url = "{{ route('admin.concerts.update') }}";
+        }
+        fetch(url, {
+            method: themethod,
             headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
             },
             body: JSON.stringify(formData)
         })
         .then(res => res.json())
         .then(data => {
             if(data.success) {
-                alert("✅ Concert enregistré en base !");
-                window.location.reload(); 
+                closeModal();
+                parent.location.reload(); 
             } else {
                 alert("❌ Erreur : " + (data.message || "Inconnue"));
             }
@@ -157,33 +162,32 @@
         return [year, month, day].join('-');return newDate;
     }
     
-    // Modal ajout/update nouveau concert
-    function openConcertModal(id) { 
-        // Add (on vide les champs)
-        if (id === 0) { 
-            $("#modal-title").text('Ajouter un concert');
-            $("#concertForm")[0].reset();
-            $("#button-text").text('Ajouter');
-            $("method-form").val('POST');
-        // Update (on preremplie les champs)
-        } else {
-            const event = concerts.find(res => res.id === id);
-            if (!event) return;
-            $("#modal-title").text('Modifier concert');
-            $("#eventName").val(event.name_event);
-            $("#eventType").val(event.type_event);
-            $("#eventDate").val(formatDate2(event.date_event));
-            $("#eventLink").val(event.link_event);
-            $("#eventId").val(event.id);
-            $("#button-text").text('Modifier');
-            $("method-form").val('PATCH');
-        }
-        document.getElementById('concert-modal').style.display = 'flex'; 
+    // Modal ajouter un concert
+    function addConcert() {
+        $('#concert-modal').css('display', "flex");
+        $("#modal-title").text('Ajouter un concert');
+        $("#concertForm")[0].reset();
+        $("#button-text").text('Ajouter');
+    }
+
+    // Modal editer un concert
+    function editConcert(id) { 
+        $('#concert-modal').css('display', "flex");
+        const event = concerts.find(res => res.id === id);
+        if (!event) return;
+        $("#modal-title").text('Modifier concert');
+        $("#eventName").val(event.name_event);
+        $("#eventType").val(event.type_event);
+        $("#eventDate").val(formatDate2(event.date_event));
+        $("#eventLink").val(event.link_event);
+        $("#eventId").val(event.id);
+        $("#button-text").text('Modifier');
+        $("#method-form").val('PATCH');
     }
 
     // Fermer la modal de création d'une reservation manuelle
-    function closeConcertModal() { 
-        document.getElementById('concert-modal').style.display = 'none'; 
+    function closeModal() { 
+        $('#concert-modal').css("display", "none"); 
     }
     
     //-----------------------------------------------------------------
@@ -211,30 +215,6 @@
             }
         })
         .catch(error => console.error("Erreur fatale :", error));
-    }
-
-    // Annulation d'une reservation (confirmée ou en attente)
-    function cancelConcert(id) {
-        if(!confirm(`Annuler ce concert ?`)) return;
-
-        fetch(`/admin/concerts/cancel/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                window.location.reload(); 
-            }
-        });
-    }
-
-    // Previsualiser et/ou modifier les infos d'un concert 
-    function viewConcert(id) {
-        openConcertModal(id);
     }
 </script>
 @endsection
