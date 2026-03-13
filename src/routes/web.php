@@ -54,11 +54,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // TABLES
     //*************************************
     Route::get('/tables', [AdminController::class, 'tables'])->name('admin.tables'); // Lister les tables
-<<<<<<< HEAD
-    Route::post('/tables/store/{id}', [AdminController::class, 'storeTable'])->name('admin.tables.store'); // Ajouter une table
-=======
     Route::post('/tables/store/', [AdminController::class, 'storeTable'])->name('admin.tables.store'); // Ajouter une table
->>>>>>> dev2
     Route::patch('/tables/desactive/{id}', [AdminController::class, 'desactiveTable'])->name('admin.tables.desactive'); // Desactiver une table
     
     //*************************************

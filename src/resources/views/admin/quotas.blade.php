@@ -21,10 +21,13 @@
         function saveQuota() {
             let nb = $('#nbQuota').val();
             if(!nb || !confirm('Confirmer la modification ?')) return;  
-             fetch("{{ route('admin.quotas.update') }}", {
+            let url = "{{ route('admin.quotas.update', ['nb' => 'NB_HERE']) }}";
+            url = url.replace('NB_HERE', nb);
+            fetch(url, {
                 method: 'PATCH',
                     headers: {
-                    "Content-Type": "application/json",
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
                         "X-CSRF-TOKEN": csrfToken
                 },
                 // On envoie la donnée ici !
@@ -32,10 +35,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                if(data.success) {
-                    //alert('Quota modifié !');
-                    //location.reload(); 
-                }
+                if(data.success) {}
             }); 
         }
     </script>

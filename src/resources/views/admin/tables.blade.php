@@ -24,9 +24,9 @@
     </div>
     <script>
         $(document).ready(function() {
-            getTotalTables();
-            getTotalCapacity();
+            getStats();
         });
+
         // Recuperer nombre de tables
         function getTotalTables() {
             var countTables =  $('.table-item').length;
@@ -42,37 +42,56 @@
             $("#totalCapacity").html(sum);
         }
 
+        function getStats() {
+            getTotalTables();
+            getTotalCapacity();
+        }
+
         // ADD TABLE
-        function addTable() {$
+        function addTable() {
             let tableName     = $('#tableName').val();
             let tableCapacity = $('#tableCapacity').val();
-            
-            if(!tableName || !tableCapacity) {alert('Veuillez remplir le numéro et la capacité de la table.');return;}
-            
-            let url = "{{ route('admin.tables.store', ['name' => 'NAME_HERE', 'capacity' => 'CAPACITY_HERE']) }}";
-            url = url.replace('NAME_HERE', tableName).replace('CAPACITY_HERE', tableCapacity);
-            fetch(url, {
+
+            if(!tableName || !tableCapacity) return;
+            fetch("{{ route('admin.tables.store') }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Accept": "application/json",
                     "X-CSRF-TOKEN": csrfToken
-                }
+                },
+                // 2. On envoie les données ICI, dans le corps de la requête
+                body: JSON.stringify({
+                    name: tableName,
+                    capacity: tableCapacity
+                })
             })
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    alert('Table ajoutée !');
-                    location.reload(); 
+                    let newBloc = `
+                    <div id="table-${data.table.id}" class="table-item" onclick="desactiveTable(${data.table.id}, '${data.table.name}')">
+                        <div id="table-name" class="table-number">${data.table.name}</div>
+                        <div class="table-capacity">${data.table.capacity} places</div>
+                    </div>
+                    `;
+                    $("#tablesGrid").append(newBloc);
+                    getStats();
+                    $(':input').val('');
+                } else {
+                    console.error("Erreurs de validation :", data.errors);
+                    alert("Erreur : " + JSON.stringify(data.errors));
                 }
-            });
+            })
+            .catch(error => console.error("Erreur fatale :", error));
         }
 
         // DESACTIVATE TABLE
-        function desactiveTable(id) {
-            if(!confirm('Confirmer la descativation de la table ' + $('#table-name').val() + '?')) return;
-            alert(id);
-            return;
-            fetch(`{{ route('admin.resas.updateStatus', ['id' => ${id}, 'action' => '${action}']) }}`, {
+        function desactiveTable(id, name) {
+            if(!confirm(`Confirmer la descativation de la table ${name} ?`)) return;
+            let url = "{{ route('admin.tables.desactive', ['id' => 'ID_HERE']) }}";
+            url = url.replace('ID_HERE', id);
+            fetch(url, {
                 method: 'PATCH',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
@@ -82,10 +101,14 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    $('#table-'+id').hide();
-                    //location.reload(); // On rafraîchit pour voir la table disparaître
+                    $(`#table-${data.table.id}`).remove();
+                    getStats();
+                } else {
+                    console.error("Erreurs de validation :", data.errors);
+                    alert("Erreur : " + JSON.stringify(data.errors));
                 }
-            });
+            })
+            .catch(error => console.error("Erreur fatale :", error));
         }
     </script>
 @endsection
