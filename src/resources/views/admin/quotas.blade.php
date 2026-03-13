@@ -21,7 +21,7 @@
         function saveQuota() {
             let nb = $('#nbQuota').val();
             if(!nb || !confirm('Confirmer la modification ?')) return;  
-             fetch({{ route('admin.quotas.update') }}, {
+             fetch("{{ route('admin.quotas.update') }}", {
                 method: 'PATCH',
                     headers: {
                     "Content-Type": "application/json",
@@ -33,8 +33,8 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    alert('Quota modifié !');
-                    location.reload(); 
+                    //alert('Quota modifié !');
+                    //location.reload(); 
                 }
             }); 
         }
