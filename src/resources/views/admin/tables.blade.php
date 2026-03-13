@@ -19,10 +19,29 @@
         </div>
                 
         <div style="margin-top: 20px; padding: 15px; background: var(--color-cream); border-radius: 10px;">
-            <strong>Tables:</strong> <span id="totalTables">{{ $nb }}</span> - <strong>Capacité totale :</strong> <span id="totalCapacity">{{ $sum }}</span> places
+            <strong>Tables:</strong> <span id="totalTables"></span> - <strong>Capacité totale :</strong> <span id="totalCapacity"></span> places
         </div>
     </div>
     <script>
+        $(document).ready(function() {
+            getTotalTables();
+            getTotalCapacity();
+        });
+        // Recuperer nombre de tables
+        function getTotalTables() {
+            var countTables =  $('.table-item').length;
+            $("#totalTables").html(countTables);
+        }
+
+        // Recuperer capacité total
+        function getTotalCapacity() {
+            var sum = 0;
+            $('.table-capacity').each(function(){
+                sum += parseFloat($(this).text());  // Or this.innerHTML, this.innerText
+            });
+            $("#totalCapacity").html(sum);
+        }
+
         // ADD TABLE
         function addTable() {$
             let tableName     = $('#tableName').val();

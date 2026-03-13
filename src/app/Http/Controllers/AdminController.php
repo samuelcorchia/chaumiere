@@ -259,12 +259,9 @@ class AdminController extends Controller
     public function tables()
     {
         $page        = 'tables';
-        $aTablesList = $allTables = Table::where('active', true)
-            ->orderBy('name')->get();
+        $aTablesList = Table::where('active', true)->orderBy('name')->get();
             
-        $nb          = $aTablesList->count();
-        $sum         = $aTablesList->sum('capacity');
-        return view('admin.tables', compact('page', 'aTablesList', 'allTables', 'nb', 'sum'));
+        return view('admin.tables', compact('page', 'aTablesList'));
     }
 
     // ---------------------------------------------------------------------------
@@ -289,18 +286,11 @@ class AdminController extends Controller
     // ---------------------------------------------------------------------------
     public function desactiveTable($id)
     {
-        try {
-            $table = Table::findOrFail($id); // Trouve ou génère une erreur 404
-            $table->active = false;
-            $table->save();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            // Renvoie l'erreur SQL réelle pour comprendre le blocage
-            return response()->json([
-                'success' => false, 
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $table = Table::findOrFail($id);
+        $table->active = false;
+        $table->save(); 
+        
+        return response()->json(['success' => true, 'table' => $table]);
     }
 
     // ---------------------------------------------------------------------------
