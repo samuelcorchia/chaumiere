@@ -35,32 +35,9 @@
             </div>
         </div>
 
-        <!-- Stats Cards -->
-        <!--
-        <div class="admin-stats" id="statsContainer">
-            <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="text-3xl font-bold text-gray-900">{{ $stats['total'] }}</div>
-                <div class="stat-label">Total Réservations</div>
-            </div>
-            <div class="stat-card confirmed">
-                <div class="stat-icon">✅</div>
-                <div class="stat-number" id="confirmedCount">{{ $stats['confirmed'] }}</div>
-                <div class="stat-label">Confirmées</div>
-            </div>
-            <div class="stat-card pending">
-                <div class="stat-icon">⏳</div>
-                <div class="stat-number" id="pendingCount">{{ $stats['pending'] }}</div>
-                <div class="stat-label">En attente</div>
-            </div>
-        </div>
-        -->
-
-        <!-- Reservations Table -->
+        <!-- Reservations confirmées -->
         <div class="admin-table-container">
-            <div class="admin-table-header">
-                <h2 style="font-size: 2em;">➀ Réservations confirmées</h2>
-            </div>
+            <div class="admin-table-header"><h2 style="font-size: 2em;">➀ Réservations confirmées</h2></div>
             <table id="reservationsTableConfirmed" class="admin-table" style="display: table;">
             <thead>
                 <tr>
@@ -78,18 +55,10 @@
             <tbody id="reservationsBody" class="bg-white divide-y divide-gray-200">
             @foreach($reservations['confirmed'] as $reservation)
                 <tr>
-                    <td>
-                        <div class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('d/m/Y') }}</div>
-                    </td>
-                    <td>
-                        <div class="text-sm text-gray-900">{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('H:i') }}</div>
-                    </td>
-                    <td>
-                        <div class="text-sm font-medium text-gray-900">{{ $reservation->nom }}</div>
-                    </td>
-                    <td>
-                        {{ $reservation->guest_count }}
-                    </td>
+                    <td data-order="{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('Ymd') }}">{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('H:i') }}</td>
+                    <td>{{ $reservation->nom }}</td>
+                    <td>{{ $reservation->guest_count }}</td>
                     <td>
                         <div class="assigned-tables">
                             @if(!empty($reservation->tables_id))
@@ -101,39 +70,26 @@
                             @endif
                         </div>
                     </td>
+                    <td>{{ $reservation->phone ?? '-' }}</td>
+                    <td><span class="source-badge {{ $reservation->source ?? 'online' }}">{{ $reservation->source == 'phone' ? '📞 Tél.' : '🌐 Web' }}</span></td>
+                    <td><span class="status-badge {{ $reservation->status }}">{{ ucfirst($reservation->status) }}</span></td>
                     <td>
-                        <div class="text-sm text-gray-500">{{ $reservation->phone ?? '-' }}</div>
-                    </td>
-                    <td>
-                        <span class="source-badge {{ $reservation->source ?? 'online' }}">
-                            {{ $reservation->source == 'phone' ? '📞 Tél.' : '🌐 Web' }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="status-badge {{ $reservation->status }}">
-                            {{ ucfirst($reservation->status) }}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="action-btn cancel" onclick="cancelReservation({{ $reservation->id }})">Annuler</button>
+                        <button class="action-btn cancel" onclick="updateStatusReservation({{ $reservation->id }}, `{{ $reservation->nom }}`, 'cancel')">Annuler</button>
                         <button class="action-btn view" onclick="viewReservation({{ $reservation->id }})">Voir</button>
                     </td>
                 </tr>
             @endforeach
             </tbody>
             </table>
-
             <div id="emptyState" style="display: none; text-align: center; padding: 60px 20px;">
                 <div style="font-size: 4rem; margin-bottom: 20px;">📝</div>
                 <h3>Aucune réservation</h3>
             </div>
         </div>
 
+        <!-- Reservations en attente -->
         <div class="admin-table-container" style="margin-top: 2em;">
-            <div class="admin-table-header">
-                <h2 style="font-size: 2em;">➁ Réservations à valider</h2>
-            </div>
-
+            <div class="admin-table-header"><h2 style="font-size: 2em;">➁ Réservations en attente</h2></div>
             <table id="reservationsTablePending" class="admin-table" style="display: table;">
             <thead>
                 <tr>
@@ -151,18 +107,10 @@
             <tbody id="reservationsBody">
             @foreach($reservations['pending'] as $reservation)
                 <tr>
-                    <td>
-                        <div class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('d M Y') }}</div>
-                    </td>
-                    <td>
-                        <div class="text-sm text-gray-900">{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('H:i') }}</div>
-                    </td>
-                    <td>
-                        <div class="text-sm font-medium text-gray-900">{{ $reservation->nom }}</div>
-                    </td>
-                    <td>
-                        {{ $reservation->guest_count }}
-                    </td>
+                    <td data-order="{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('Ymd') }}">{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($reservation->reserved_at)->format('H:i') }}</td>
+                    <td>{{ $reservation->nom }}</td>
+                    <td>{{ $reservation->guest_count }}</td>
                     <td>
                         <div class="assigned-tables">
                             @if(!empty($reservation->tables_id))
@@ -174,29 +122,18 @@
                             @endif
                         </div>
                     </td>
+                    <td>{{ $reservation->phone ?? '-' }}</td>
+                    <td><span class="source-badge {{ $reservation->source ?? 'online' }}">{{ $reservation->source == 'phone' ? '📞 Tél.' : '🌐 Web' }}</span></td>
+                    <td><span class="status-badge {{ $reservation->status }}">{{ ucfirst($reservation->status) }}</span></td>
                     <td>
-                        <div class="text-sm text-gray-500">{{ $reservation->phone ?? '-' }}</div>
-                    </td>
-                    <td>
-                        <span class="source-badge {{ $reservation->source ?? 'online' }}">
-                            {{ $reservation->source == 'phone' ? '📞 Tél.' : '🌐 Web' }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="status-badge {{ $reservation->status }}">
-                            {{ ucfirst($reservation->status) }}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="action-btn confirm" onclick="confirmReservation({{ $reservation->id }})">Confirmer</button>
-                        <button class="action-btn cancel" onclick="cancelReservation({{ $reservation->id }})">Annuler</button>
+                        <button class="action-btn confirm" onclick="updateStatusReservation({{ $reservation->id }}, `{{ $reservation->nom }}`, 'confirm')">Confirmer</button>
+                        <button class="action-btn cancel" onclick="updateStatusReservation({{ $reservation->id }}, `{{ $reservation->nom }}`, 'cancel')">Annuler</button>
                         <button class="action-btn view" onclick="viewReservation({{ $reservation->id }})">Voir</button>
                     </td>
                 </tr>
             @endforeach
             </tbody>
             </table>
-
             <div id="emptyState" style="display: none; text-align: center; padding: 60px 20px;">
                 <div style="font-size: 4rem; margin-bottom: 20px;">📝</div>
                 <h3>Aucune réservation</h3>
@@ -307,62 +244,90 @@
             </form>
         </div>
     </div>
-
-    <!-- Modal Détails Réservation -->
-    <div class="modal-overlay" id="reservationModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>📋 Détails de la Réservation</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div id="modalContent"></div>
-            <div style="margin-top: 30px;">
-                <button class="btn" onclick="closeModal()">Fermer</button>
-            </div>
-        </div>
-    </div>
-
 <script>
     $(document).ready(function() {
-        $('#reservationsTablePending').DataTable({
-            "paging": false,
-            "lengthChange": false,
-            "searching": true,
-            "info": false,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json"
-            }
-        });
-        $('#reservationsTableConfirmed').DataTable({
-            "paging": false,
-            "lengthChange": false,
-            "searching": true,
-            "info": false,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json"
-            }
-        });
-    });
-
-    // 1. Initialisation des données depuis Laravel
-    let reservations = @json($reservations['all']); 
-    let tables = [
-        @foreach($allTables as $table)
-            { id: {{ $table->id }}, number: '{{ $table->name }}', capacity: {{ $table->capacity }} },
-        @endforeach
-    ];
-    let selectedTables = [];
-    //const csrfToken = '{{ csrf_token() }}';
-
-    // 2. Au chargement de la page
-    document.addEventListener('DOMContentLoaded', function() {
-        //renderReservations();
-        // On initialise la date du jour par défaut dans le modal
+        // Date du jour par défaut dans la modal
         const dateInput = document.getElementById('phoneDate');
         if(dateInput) dateInput.min = new Date().toISOString().split('T')[0];
+
+        // DataTable (tri, recherche, etc...) sur les reservation confirmées et en attente
+        $('#reservationsTableConfirmed, #reservationsTablePending').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": true,
+            "info": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json"
+            }
+        });
+    
+        // Initialisation des données depuis Laravel
+        let reservations = @json($reservations['all']); 
+        let tables = [
+            @foreach($allTables as $table)
+                { id: {{ $table->id }}, number: '{{ $table->name }}', capacity: {{ $table->capacity }} },
+            @endforeach
+        ];
+        let selectedTables = [];
     });
 
+    //-----------------------------------------------------------------
+    // Filtre eservations confirmées par date
+    //-----------------------------------------------------------------
+    $('#filterDate').on('change', function(e) {
+        window.location = "{{ route('admin.reservations') }}/"+$('#filterDate').val();
+    });
+
+    //-----------------------------------------------------------------
+    // Modal d'une reservation manuelle
+    //-----------------------------------------------------------------
+    function openNewReservationModal() { 
+        document.getElementById('phoneReservationForm').reset();
+        selectedTables = [];
+        renderTablesSelection();
+        document.getElementById('newReservationModal').style.display = 'flex'; 
+    }
+    function closeNewReservationModal() { document.getElementById('newReservationModal').style.display = 'none'; }
+    
+    //-----------------------------------------------------------------
+    // Confirmation ou annulation d'une reservation
+    //-----------------------------------------------------------------
+    function updateStatusReservation(id_customer, name_customer, new_status) {
+        let confirm_message = new_status === 'confirm' ? 'Confirmer' : 'Annuler';
+        if (!confirm(confirm_message + ` cette réservation [${name_customer}] ?`)) return;
+        fetch("{{ route('admin.resas.updateStatus') }}", {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify({ id: id_customer, action: new_status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                window.location.reload();
+            } else {
+                console.error("Erreurs de validation :", data.errors);
+                alert("Erreur : " + JSON.stringify(data.errors));
+            }
+        })
+        .catch(error => console.error("Erreur fatale :", error));
+    }
+
+    //-----------------------------------------------------------------------------------------
     // --- GESTION DES TABLES ---
+    // Cette fonction est appelée par le onchange du select "Nombre de personnes"
+    //-----------------------------------------------------------------------------------------
+    function updateTablesSelection() {
+        // On appelle la fonction qui dessine la grille des tables
+        if (typeof renderTablesSelection === "function") {
+            renderTablesSelection();
+        } else {
+            console.error("La fonction renderTablesSelection n'est pas encore définie.");
+        }
+    }
 
     function toggleTableSelection(tableNumber) {
         const index = selectedTables.indexOf(tableNumber);
@@ -424,140 +389,6 @@
         }).join('');
         
         updateSelectedTablesSummary();
-    }
-
-    // --- RECHARGE RESULTATS PAR DATE ---
-    document.getElementById('filterDate').addEventListener('change', function(e) {
-        window.location = "{{ route('admin.reservations') }}/"+document.getElementById('filterDate').value;
-    });
-
-    // --- GESTION DU FORMULAIRE (ENVOI LARAVEL) ---
-    document.getElementById('phoneReservationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = {
-            name: document.getElementById('phoneNom').value,
-            date: document.getElementById('phoneDate').value,
-            heure: document.getElementById('phoneHeure').value,
-            nb: document.getElementById('phonePersonnes').value,
-            tel: document.getElementById('phoneTel').value,
-            emp: document.getElementById('phoneEmplacement').value,
-            rq: document.getElementById('phoneRemarques').value,
-            tables: selectedTables 
-        };
-
-        fetch("{{ route('admin.resas.storePhone') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success) {
-                alert("✅ Réservation enregistrée en base !");
-                window.location.reload(); 
-            } else {
-                alert("❌ Erreur : " + (data.message || "Inconnue"));
-            }
-        })
-        .catch(err => alert("❌ Erreur de connexion au serveur"));
-    });
-
-    // Helpers
-    function formatDate(d) { return new Date(d).toLocaleDateString('fr-FR', {day:'numeric', month:'short'}); }
-    function formatStatus(s) { return s === 'confirmed' ? 'Confirmée' : (s === 'pending' ? 'Attente' : 'Annulée'); }
-    
-    // Modal d'une reservation manuelle
-    function openNewReservationModal() { 
-        document.getElementById('phoneReservationForm').reset();
-        selectedTables = [];
-        renderTablesSelection();
-        document.getElementById('newReservationModal').style.display = 'flex'; 
-    }
-
-    // Fermer la modal de création d'une reservation manuelle
-    function closeNewReservationModal() { document.getElementById('newReservationModal').style.display = 'none'; }
-    
-    // Fermer la modal de visualisation d'une reseravtion
-    function closeModal() { document.getElementById('reservationModal').style.display = 'none'; }
-
-    // Confirmation d'une reservation en attente
-    function confirmReservation(id) {
-        if (!confirm('Confirmer cette réservation ?')) return;
-        fetch(`/admin/reservation/confirm/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                window.location.reload(); 
-            }
-        });
-    }
-
-    // Annulation d'une reservation (confirmée ou en attente)
-    function cancelReservation(id) {
-        if(!confirm(`Annuler cette reservation ?`)) return;
-
-        fetch(`/admin/reservation/cancel/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                window.location.reload(); 
-            }
-        });
-    }
-
-    // Previsualiser les detaiuls d'une reservation 
-    function viewReservation(id) {
-        const r = reservations.find(res => res.id === id);
-        if (!r) greturn;
-            document.getElementById('modalContent').innerHTML = `
-            <div style="display: grid; gap: 15px;">
-                <div><strong>Nom :</strong> ${r.nom}</div>
-                <div><strong>Date :</strong> ${formatDate(r.dateresa)}</div>
-                <div><strong>Heure :</strong> ${r.heure}</div>
-                <div><strong>Personnes :</strong> ${r.guest_count}</div>
-                <div><strong>Tables :</strong> ${r.tables_id || '—'}</div>
-                <div><strong>Téléphone :</strong> ${r.phone || '—'}</div>
-                <div><strong>Email :</strong> ${r.mail || '—'}</div>
-                <div><strong>Emplacement :</strong> ${formatEmplacement(r.emplacement)}</div>
-                <div><strong>Source :</strong> <span class="source-badge ${r.source || 'online'}">${r.source === 'phone' ? '📞 Téléphone' : '🌐 En ligne'}</span></div>
-                <div><strong>Statut :</strong> <span class="status-badge ${r.status}">${formatStatus(r.status)}</span></div>
-                ${r.remarque ? `<div><strong>Remarques :</strong><br>${r.remarque}</div>` : ''}
-                <div><strong>Créée le :</strong> ${new Date(r.created_at).toLocaleString('fr-FR')}</div>
-            </div>
-        `;
-        document.getElementById('reservationModal').style.display = 'flex';
-    }
-
-    // Formatage pour l'affichage de l'emplacement (terasse ou interieur)
-    function formatEmplacement(emp) {
-        const labels = { 'indifferent': 'Indifférent', 'terrasse': '🌲 Terrasse', 'interieur': '🏠 Intérieur' };
-        return labels[emp] || emp;
-    }
-
-    // Cette fonction est appelée par le onchange du select "Nombre de personnes"
-    function updateTablesSelection() {
-        // On appelle la fonction qui dessine la grille des tables
-        if (typeof renderTablesSelection === "function") {
-            renderTablesSelection();
-        } else {
-            console.error("La fonction renderTablesSelection n'est pas encore définie.");
-        }
     }
 </script>
 @endsection

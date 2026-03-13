@@ -40,42 +40,46 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Tout le Back-office (les routes ci dessous) est protégé par le middleware 'auth'
 //--------------------------------------------------------------------------
 Route::middleware(['auth'])->prefix('admin')->group(function () {
-    
-    //*************************************
-    // CONCERTS
-    //*************************************
-    Route::get('/concerts', [AdminController::class, 'concerts'])->name('admin.concerts');
-    Route::get('/concerts/{date}', [AdminController::class, 'concerts']) ->name('admin.concerts');
-    Route::post('/concerts/store', [AdminController::class, 'storeConcert'])->name('admin.concerts.store');
-    Route::patch('/concerts/confirm/{id}', [AdminController::class, 'confirmConcert'])->name('admin.concerts.confirm');
-    Route::patch('/concerts/cancel/{id}', [AdminController::class, 'cancelConcert'])->name('admin.concerts.cancel');
-    
     //*************************************
     // TABLES
     //*************************************
-    Route::get('/tables', [AdminController::class, 'tables'])->name('admin.tables'); // Lister les tables
-    Route::post('/tables/store/', [AdminController::class, 'storeTable'])->name('admin.tables.store'); // Ajouter une table
-    Route::patch('/tables/desactive/{id}', [AdminController::class, 'desactiveTable'])->name('admin.tables.desactive'); // Desactiver une table
+    Route::get('/tables', [AdminController::class, 'tables'])
+        ->name('admin.tables'); // Lister les tables
+    Route::post('/tables/store/', [AdminController::class, 'storeTable'])
+        ->name('admin.tables.store'); // Ajouter une table
+    Route::patch('/tables/desactive/{id}', [AdminController::class, 'desactiveTable'])
+        ->name('admin.tables.desactive'); // Desactiver une table
     
     //*************************************
     // QUOTAS
     //*************************************
-    Route::get('/quotas', [AdminController::class, 'quotas'])->name('admin.quotas'); // Lister queota
-    Route::patch('/quotas/update', [AdminController::class, 'updateQuota'])->name('admin.quotas.update');
+    Route::get('/quotas', [AdminController::class, 'quotas'])
+        ->name('admin.quotas'); // Lister queota
+    Route::patch('/quotas/update', [AdminController::class, 'updateQuota'])
+        ->name('admin.quotas.update'); // Modifier quota de tables reservables
     
     //*************************************
     // RESERVATIONS
     //*************************************
-    Route::get('/reservations', [AdminController::class, 'reservations'])
-        ->name('admin.reservations');
-    Route::get('/reservations/{date}', [AdminController::class, 'reservations'])
-        ->name('admin.reservations');
-    Route::post('/reservation/phone', [AdminController::class, 'storePhoneReservation'])
-        ->name('admin.resas.storePhone'); // Résas par téléphone
-    Route::post('/reservation/web', [AdminController::class, 'storeWebReservation'])
-        ->name('admin.resas.storeWeb'); // Résas par téléphone
-   
-    Route::patch('/reservation/update/{id}/{action}', [AdminController::class, 'updateReservationStatus'])
+    Route::get('/reservations/{date?}', [AdminController::class, 'reservations'])
+        ->name('admin.reservations'); // Liste des reservations confirmées ou en attente (par date si renseigné) 
+    
+    Route::post('/reservation/store/{source}', [AdminController::class, 'storeReservationStatus'])
+        ->name('admin.resas.store')
+        ->where('source', 'web|phone'); // Ajouter une reservation WEB (online) ou PHONE (direct)
+    
+    Route::patch('/reservation/updateStatus}', [AdminController::class, 'updateReservationStatus'])
         ->name('admin.resas.updateStatus')
         ->where('action', 'confirm|cancel'); // Confirmer ou annuler une reservation
+    
+    //*************************************
+    // CONCERTS
+    //*************************************
+    Route::get('/concerts/{date?}', [AdminController::class, 'concerts'])
+        ->name('admin.concerts'); // Liste des concert validées ou en attente (par date si renseigné)
+    
+    Route::post('/concerts/store', [AdminController::class, 'storeConcert'])
+        ->name('admin.concerts.store'); // Ajouter un concert
+    Route::patch('/concerts/updateStatus', [AdminController::class, 'updateConcertStatus'])
+        ->name('admin.concerts.updateStatus'); // Confirmer ou annuler un concert
 });

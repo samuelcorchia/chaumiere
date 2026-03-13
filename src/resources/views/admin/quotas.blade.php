@@ -21,16 +21,13 @@
         function saveQuota() {
             let nb = $('#nbQuota').val();
             if(!nb || !confirm('Confirmer la modification ?')) return;  
-            let url = "{{ route('admin.quotas.update', ['nb' => 'NB_HERE']) }}";
-            url = url.replace('NB_HERE', nb);
-            fetch(url, {
+            fetch("{{ route('admin.quotas.update') }}", {
                 method: 'PATCH',
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json",
                         "X-CSRF-TOKEN": csrfToken
                 },
-                // On envoie la donnée ici !
                 body: JSON.stringify({ nb: nb }) 
             })
             .then(response => response.json())

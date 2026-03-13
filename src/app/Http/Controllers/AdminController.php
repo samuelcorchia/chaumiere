@@ -11,6 +11,74 @@ use App\Models\Concert;
 class AdminController extends Controller
 {
     // ---------------------------------------------------------------------------
+    // Gestion quotas
+    // ---------------------------------------------------------------------------
+    public function quotas()
+    {
+        $page      = 'quotas';
+        $quota     = Quota::all()->first();
+        $iNbTables = Table::where('active', true)->count();
+
+        return view('admin.quotas', compact('page', 'quota', 'iNbTables'));
+    }
+
+    // ---------------------------------------------------------------------------
+    // Modification quotas
+    // ---------------------------------------------------------------------------
+    public function updateQuota(Request $request) 
+    {
+        $request->validate(['nb' => 'required|integer|min:0']);
+
+        $quota = Quota::first();
+        if ($quota) {
+            $quota->update(['nb' => $request->nb]);
+        } else {
+            Quota::create(['nb' => $request->nb]);
+        }
+        return response()->json(['success' => true], 200);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Gestion des tables
+    // ---------------------------------------------------------------------------
+    public function tables()
+    {
+        $page        = 'tables';
+        $aTablesList = Table::where('active', true)->orderBy('name')->get();
+            
+        return view('admin.tables', compact('page', 'aTablesList'));
+    }
+
+    // ---------------------------------------------------------------------------
+    // Ajout d'une table
+    // ---------------------------------------------------------------------------
+    public function storeTable(Request $request)
+    {
+        // valider les données
+        $request->validate([
+            'name' => 'required',
+            'capacity' => 'required|integer'
+        ]);
+        $table = Table::create([
+            'name' => $request->name, 
+            'capacity' => $request->capacity
+        ]);
+        return response()->json(['success' => true, 'table' => $table], 201);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Desactivation d'une table
+    // ---------------------------------------------------------------------------
+    public function desactiveTable($id)
+    {
+        $table = Table::findOrFail($id);
+        $table->active = false;
+        $table->save(); 
+        
+        return response()->json(['success' => true, 'table' => $table]);
+    }
+    
+    // ---------------------------------------------------------------------------
     // Gestion des concerts
     // ---------------------------------------------------------------------------
     public function concerts($dateGet = null)
@@ -67,31 +135,17 @@ class AdminController extends Controller
     }
 
     // ---------------------------------------------------------------------------
-    // Annuler un concert
+    // Modifier un concert
     // ---------------------------------------------------------------------------
-    public function cancelConcert($id)
+    public function updateConcertStatus(Request $request)
     {
+        $validated = $request->validate([
+            'id'     => 'required|integer',
+            'action' => 'required|string|max:255'
+        ]);
         try {
-            $table = Concert::findOrFail($id); // Trouve ou génère une erreur 404
-            $table->active = false;
-            $table->save();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false, 
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-    
-    // ---------------------------------------------------------------------------
-    // Confirmer un concert
-    // ---------------------------------------------------------------------------
-    public function confirmConcert($id)
-    {
-        try {
-            $table = Concert::findOrFail($id); // Trouve ou génère une erreur 404
-            $table->active = true;
+            $table = Concert::findOrFail($validated['id']);
+            $table->active = $validated['action'] === 'confirm' ? true : false;
             $table->save();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
@@ -254,55 +308,18 @@ class AdminController extends Controller
     }
 
     // ---------------------------------------------------------------------------
-    // Gestion des tables
+    // Modifier une reservation
     // ---------------------------------------------------------------------------
-    public function tables()
+    public function updateReservationStatus(Request $request)
     {
-        $page        = 'tables';
-        $aTablesList = Table::where('active', true)->orderBy('name')->get();
-            
-        return view('admin.tables', compact('page', 'aTablesList'));
-    }
-
-    // ---------------------------------------------------------------------------
-    // Ajout d'une table
-    // ---------------------------------------------------------------------------
-    public function storeTable(Request $request)
-    {
-        // valider les données
-        $request->validate([
-            'name' => 'required',
-            'capacity' => 'required|integer'
+        $validated = $request->validate([
+            'action' => 'required|string'
         ]);
-        $table = Table::create([
-            'name' => $request->name, 
-            'capacity' => $request->capacity
-        ]);
-        return response()->json(['success' => true, 'table' => $table], 201);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Desactivation d'une table
-    // ---------------------------------------------------------------------------
-    public function desactiveTable($id)
-    {
-        $table = Table::findOrFail($id);
-        $table->active = false;
-        $table->save(); 
-        
-        return response()->json(['success' => true, 'table' => $table]);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Annuler une reservation
-    // ---------------------------------------------------------------------------
-    public function cancelReservation($id)
-    {
         try {
-            $table = Reservation::findOrFail($id); // Trouve ou génère une erreur 404
-            $table->status = 'cancelled';
+            $table = Reservation::findOrFail($request->id);
+            $table->status = $validated["action"] === 'cancel' ? 'cancelled' : 'confirmed';
             $table->save();
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true, 'table' => $table]);
         } catch (\Exception $e) {
             // Renvoie l'erreur SQL réelle pour comprendre le blocage
             return response()->json([
@@ -310,52 +327,5 @@ class AdminController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-    
-    // ---------------------------------------------------------------------------
-    // Confirmer une reservation
-    // ---------------------------------------------------------------------------
-    public function confirmReservation($id)
-    {
-        try {
-            $table = Reservation::findOrFail($id); // Trouve ou génère une erreur 404
-            $table->status = 'confirmed';
-            $table->save();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            // Renvoie l'erreur SQL réelle pour comprendre le blocage
-            return response()->json([
-                'success' => false, 
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-    
-    // ---------------------------------------------------------------------------
-    // Gestion quotas
-    // ---------------------------------------------------------------------------
-    public function quotas()
-    {
-        $page      = 'quotas';
-        $quota     = Quota::all()->first();
-        $iNbTables = Table::where('active', true)->count();
-
-        return view('admin.quotas', compact('page', 'quota', 'iNbTables'));
-    }
-
-    // ---------------------------------------------------------------------------
-    // Modification quotas
-    // ---------------------------------------------------------------------------
-    public function updateQuota(Request $request) 
-    {
-        $request->validate(['nb' => 'required|integer|min:0']);
-
-        $quota = Quota::first();
-        if ($quota) {
-            $quota->update(['nb' => $request->nb]);
-        } else {
-            Quota::create(['nb' => $request->nb]);
-        }
-        return response()->json(['success' => true], 200);
     }
 }
