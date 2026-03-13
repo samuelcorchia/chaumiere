@@ -125,12 +125,8 @@
             link_event: $('#eventLink').val(),
             id_event:   $('#eventId').val()
         };
-        let themethod = "POST";
-        let url = "{{ route('admin.concerts.store') }}";
-        if($('#method-form').val() === 'PATCH') {
-            themethod = "PATCH";
-            url = "{{ route('admin.concerts.update') }}";
-        }
+        let themethod = $('#eventId').val() > 0 ? "PATCH" : "POST";
+        let url = $('#eventId').val() > 0 ? "{{ route('admin.concerts.update') }}" : "{{ route('admin.concerts.store') }}";
         fetch(url, {
             method: themethod,
             headers: {

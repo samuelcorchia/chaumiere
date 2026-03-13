@@ -39,8 +39,8 @@
                             <input type="email" id="email" name="email" required placeholder="votre@email.com">
                         </div>
                         <div class="form-group">
-                            <label for="telephone">Téléphone *</label>
-                            <input type="tel" id="telephone" name="telephone" required placeholder="06 00 00 00 00">
+                            <label for="telephone">Téléphone</label>
+                            <input type="tel" id="telephone" name="telephone" placeholder="06 00 00 00 00">
                         </div>
                     </div>
 
