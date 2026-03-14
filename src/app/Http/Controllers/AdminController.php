@@ -211,6 +211,7 @@ class AdminController extends Controller
                 'heure'  => 'required|string',
                 'nb'     => 'required|integer|min:1',
                 'tel'    => 'nullable|string',
+                'email'   => 'nullable|string',
                 'emp'    => 'nullable|string', // Non présent en DB, mais utile pour la logique
                 'rq'     => 'nullable|string',
                 'source' => 'required|string'
