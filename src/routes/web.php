@@ -3,15 +3,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConcertController;
+use App\Http\Controllers\ReservationController;
 
 //--------------------------------------------------------------------------
-// Pages du site
+// Pages statiques du site (closures)
 //--------------------------------------------------------------------------
 $pages = [
     'accueil' => ['/', 'intro', '01'],
     'presentation' => ['/presentation', 'presentation', '02'],
     'infos' => ['/infos', 'infos', '01'],
-    'reservations' => ['/reservations', 'reservations', '03'],
     'histoire' => ['/histoire', 'histoire', '04'],
     'privatisation' => ['/privatisation', 'privatisation', '05'],
 ];
@@ -25,9 +25,10 @@ foreach ($pages as $name => [$url, $view, $img]) {
 }
 
 //--------------------------------------------------------------------------
-// Page des concerts
+// Page dynamiques du site
 //--------------------------------------------------------------------------
 Route::get('/concerts', [ConcertController::class, 'index'])->name('site.concerts');
+Route::get('/reservations', [ReservationController::class, 'index'])->name('site.reservations');
 
 //--------------------------------------------------------------------------
 // Page de login accessible à tous

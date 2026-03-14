@@ -121,7 +121,7 @@
                     <td>
                         <button class="action-btn confirm" onclick="updateStatusReservation({{ $reservation->id }}, `{{ $reservation->nom }}`, 'confirm')">Confirmer</button>
                         <button class="action-btn cancel" onclick="updateStatusReservation({{ $reservation->id }}, `{{ $reservation->nom }}`, 'cancel')">Annuler</button>
-                        <button class="action-btn view" onclick="viewReservation({{ $reservation->id }})">Voir</button>
+                        <button class="action-btn view" onclick="editReservation({{ $reservation->id }})">Voir/Editer</button>
                     </td>
                 </tr>
             @endforeach

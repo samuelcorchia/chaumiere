@@ -16,7 +16,6 @@
                         <li>Cuisine traditionnelle française</li>
                         <li>Soirées Concerts ou evenements</li>
                     </ul>
-
                     <!--
                     <div class="mt-3">
                         <h3>📞 Réservation par téléphone</h3>
@@ -27,31 +26,28 @@
 
                 <form class="contact-form" id="reservationForm" action="#" method="POST">
                     <h3 style="margin-bottom: 25px; color: var(--color-primary);">📝 Formulaire de Réservation</h3>
-                    
                     <div class="form-group">
-                        <label for="nom">Nom de la réservation *</label>
-                        <input type="text" id="nom" name="nom" required placeholder="Ex: Dupont, Famille Martin...">
+                        <label for="reservationNom">Nom de la réservation *</label>
+                        <input type="text" id="reservationNom" name="reservationNom" required placeholder="Ex: Dupont, Famille Martin...">
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" name="email" required placeholder="votre@email.com">
+                            <label for="reservationEmail">Email *</label>
+                            <input type="email" id="reservationEmail" name="reservationEmail" required placeholder="votre@email.com">
                         </div>
                         <div class="form-group">
-                            <label for="telephone">Téléphone</label>
-                            <input type="tel" id="telephone" name="telephone" placeholder="06 00 00 00 00">
+                            <label for="reservationPhone">Téléphone</label>
+                            <input type="tel" id="reservationPhone" name="reservationPhone" placeholder="06 00 00 00 00">
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="date">Date *</label>
-                            <input type="date" id="date" name="date" required>
+                            <label for="reservationDate">Date *</label>
+                            <input type="date" id="reservationDate" name="reservationDate" required>
                         </div>
                         <div class="form-group">
-                            <label for="heure">Heure *</label>
-                            <select id="heure" name="heure" required>
+                            <label for="reservationHeure">Heure *</label>
+                            <select id="reservationHeure" name="reservationHeure" required>
                                 <option value="">Choisir un créneau</option>
                                 <optgroup label="Déjeuner (Samedi & Dimanche)">
                                     <option value="12:00">12h00</option>
@@ -68,39 +64,31 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label for="personnes">Nombre de personnes *</label>
-                        <select id="personnes" name="personnes" required>
+                        <label for="reservationPersonnes">Nombre de personnes *</label>
+                        <select id="reservationPersonnes" name="reservationPersonnes" required>
                             <option value="">Sélectionnez</option>
-                            <option value="1">1 personne</option>
-                            <option value="2">2 personnes</option>
-                            <option value="3">3 personnes</option>
-                            <option value="4">4 personnes</option>
-                            <option value="5">5 personnes</option>
-                            <option value="6">6 personnes (maximum)</option>
+                            @for ($i = 1; $i < 7; $i++)
+                            <option value="{{ $i }}">{{ $i }} @choice('presonne|personnes', $i) @if($i == 6)(maximum)@endif</option>
+                            @endfor
                         </select>
                         <small>Pour les groupes de plus de 6 personnes, veuillez nous contacter par téléphone ou consulter notre page <a href="{{ route('site.privatisation') }}">Privatisation</a>.</small>
-                    </div>
-
+                    </div> 
                     <div class="form-group">
-                        <label for="emplacement">Préférence d'emplacement</label>
-                        <select id="emplacement" name="emplacement">
+                        <label for="reservationEmplacement">Préférence d'emplacement</label>
+                        <select id="reservationEmplacement" name="reservationEmplacement">
                             <option value="indifferent">Indifférent</option>
                             <option value="terrasse">Terrasse (si disponible)</option>
                             <option value="interieur">Intérieur</option>
                         </select>
                     </div>
-
                     <div class="form-group">
-                        <label for="remarques">Remarques ou demandes spéciales</label>
-                        <textarea id="remarques" name="remarques" placeholder="Allergies, anniversaire, occasion spéciale..."></textarea>
+                        <label for="reservationRemarques">Remarques ou demandes spéciales</label>
+                        <textarea id="reservationRemarques" name="reservationRemarques" placeholder="Allergies, anniversaire, occasion spéciale..."></textarea>
                     </div>
-
                     <button type="submit" class="btn btn-accent btn-large" style="width: 100%;">
                         ✓ Confirmer ma réservation
                     </button>
-
                     <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: var(--color-text-light);">
                         Vous recevrez un email de confirmation sous 24h.
                     </p>
@@ -178,4 +166,41 @@
         </div>
     </section>
     -->
+    <script>
+       //-----------------------------------------------------------------
+        // Ajouter une reservation
+        //-----------------------------------------------------------------
+        $('#reservationForm').on('submit', function(e) {
+            const formData = {
+                name:   $('#reservationNom').val(),
+                email:  $('#reservationEmail').val(),
+                tel:    $('#reservationPhone').val(),
+                date:   $('#reservationDate').val(),
+                heure:  $('#reservationHeure').val(),
+                nb:     $('#reservationPersonnes').val(),
+                emp:    $('#reservationEmplacement').val(),
+                rq:     $('#reservationRemarques').val(),
+                source: 'web'
+            };
+            fetch("{{ route('admin.reservations.store') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    window.location.reload();
+                    alert("Réservation prise en compte"); 
+                } else {
+                    console.error("Erreurs de validation :", data.errors);
+                    alert("Erreur : " + JSON.stringify(data.errors));$
+                }
+            })
+            .catch(error => console.error("Erreur fatale :", error));
+        });
+    </script>
 @endsection

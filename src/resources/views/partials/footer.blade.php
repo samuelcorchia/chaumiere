@@ -38,3 +38,4 @@
         </div>
     </div>
 </footer>
+<script>const csrfToken = '{{ csrf_token() }}';</script>

@@ -13,7 +13,10 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        //
+        return view('reservations', [
+            'page' => 'reservations',
+            'headerbg' => "/images/bg/03.jpg"
+        ]);
     }
 
     /**
