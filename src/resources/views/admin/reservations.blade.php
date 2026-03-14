@@ -3,11 +3,8 @@
 @section('content')
     <div class="container" style="margin-top: 5em;">            
         <div class="admin-actions">
-            <button class="btn btn-phone" onclick="addReservation()">
-                Nouvelle réservation
-            </button>
+            <button class="btn btn-phone" onclick="addReservation()">Nouvelle réservation</button>
         </div>
-
         <!-- Quota en temps réel -->
         <div class="quota-info" id="quotaInfo">
             <div class="quota-text">
@@ -32,7 +29,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Reservations confirmées -->
         <div class="admin-table-container">
             <div class="admin-table-header"><h2 style="font-size: 2em;">➀ Réservations confirmées</h2></div>
@@ -84,7 +80,6 @@
                 <h3>Aucune réservation</h3>
             </div>
         </div>
-
         <!-- Reservations en attente -->
         <div class="admin-table-container" style="margin-top: 2em;">
             <div class="admin-table-header"><h2 style="font-size: 2em;">➁ Réservations en attente</h2></div>
@@ -138,8 +133,7 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal Nouvelle Réservation Téléphone -->
+    <!-- Modal Réservation (Ajouter ou modifier) -->
     <div class="modal-overlay" id="reservationModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -204,7 +198,8 @@
                     <label for="reservationRemarques">Remarques <small>(notes internes)</small></label>
                     <textarea id="reservationRemarques" name="remarques" placeholder="Notes internes, demandes spéciales..."></textarea>
                 </div>
-                <input type="hidden" id="reservationId" name="reservationId" /> 
+                <input type="hidden" id="reservationId" name="reservationId" />
+                <input type="hidden" id="reservationSource" name="reservationSource" /> 
                 <div style="margin-top: 25px; display: flex; gap: 15px;">
                     <button type="submit" class="btn btn-phone" style="flex: 1;">
                         <span id="button-text"></span>
@@ -223,7 +218,6 @@
         // Initialiser date recherche des reservations
         const dateInput = document.getElementById('reservationDate');
         if(dateInput) dateInput.min = new Date().toISOString().split('T')[0];
-
         // DataTable sur les reservation confirmées et en attente
         $('#reservationsTableConfirmed, #reservationsTablePending').DataTable({
             "paging": false,
@@ -252,6 +246,8 @@
         $('#reservationNom').focus();
         $('#reservationForm')[0].reset();
         $("#button-text").text('Ajouter');
+        $('#reservationId').val('');
+        $('#reservationSource').val('phone');
     }
 
     //-----------------------------------------------------------------
@@ -262,13 +258,14 @@
         const resa = reservations.find(res => res.id === id);
         if (!resa) return;
         $("#modal-title").text('Modifier réservation');
-        $('#reservationNom').val(resa.nom),
-        $('#reservationDate').val(formatDate2(resa.dateresa)),
-        $('#reservationHeure').val(resa.heure),
-        $('#reservationPersonnes').val(resa.guest_count),
-        $('#reservationTel').val(resa.phone),
-        $('#reservationRemarques').val(resa.remarque),
-        $('#reservationId').val(resa.id)
+        $('#reservationNom').val(resa.nom);
+        $('#reservationDate').val(formatDate2(resa.dateresa));
+        $('#reservationHeure').val(resa.heure);
+        $('#reservationPersonnes').val(resa.guest_count);
+        $('#reservationTel').val(resa.phone);
+        $('#reservationRemarques').val(resa.remarque);
+        $('#reservationSource').val(resa.source);
+        $('#reservationId').val(resa.id);
         $("#button-text").text('Modifier');
     }
     
@@ -293,7 +290,7 @@
             id:     $('#reservationId').val()
         };
         let themethod = $('#reservationId').val() > 0 ? "PATCH" : "POST";
-        let url = $('#reservationId').val() > 0 ? "{{ route('admin.reservations.update') }}" : "{{ route('admin.reservations.store') }}";
+        let url = themethod == "PATCH" ? "{{ route('admin.reservations.update') }}" : "{{ route('admin.reservations.store') }}";
         fetch(url, {
             method: themethod,
             headers: {
