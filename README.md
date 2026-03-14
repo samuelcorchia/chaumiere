@@ -94,7 +94,18 @@ Si vous possédez déjà un serveur local (Apache/MySQL) :
 
 ## 📸 Captures d'écran
 *(Ajoutez ici vos images dans un dossier /screenshots de votre repo)*
-`![Dashboard Admin](./screenshots/dashboard.png)`
+`![Homepage](./screenshots/homepage.ppg)`
+`![Presentation](./screenshots/presentation.jpg)`
+`![Informations](./screenshots/infos.jpg)`
+`![Histoire](./screenshots/histoire.jpg)`
+`![Concerts](./screenshots/concerts.jpg)`
+`![Privatisation](./screenshots/privatisation.jpg)`
+`![Reservations](./screenshots/reservations.jpg)`
+
+
+
+
+
 
 ---
 
