@@ -63,25 +63,22 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     //*************************************
     Route::get('/reservations/{date?}', [AdminController::class, 'reservations'])
         ->name('admin.reservations'); // Liste des reservations confirmées ou en attente (par date si renseigné) 
-    
-    Route::post('/reservation/store/{source}', [AdminController::class, 'storeReservationStatus'])
-        ->name('admin.resas.store')
-        ->where('source', 'web|phone'); // Ajouter une reservation WEB (online) ou PHONE (direct)
-    
+    Route::post('/reservation/store', [AdminController::class, 'storeReservation'])
+        ->name('admin.reservations.store'); // Ajouter une reservation WEB (online) ou PHONE (direct)
+    Route::patch('/reservation/update', [AdminController::class, 'storeReservation'])
+        ->name('admin.reservations.update'); // Modifier une reservation
     Route::patch('/reservation/updateStatus}', [AdminController::class, 'updateReservationStatus'])
-        ->name('admin.resas.updateStatus')
-        ->where('action', 'confirm|cancel'); // Confirmer ou annuler une reservation
+        ->name('admin.reservations.updateStatus'); // Confirmer ou annuler une reservation
     
     //*************************************
     // CONCERTS
     //*************************************
     Route::get('/concerts/{date?}', [AdminController::class, 'concerts'])
         ->name('admin.concerts'); // Liste des concert validées ou en attente (par date si renseigné)
-    
     Route::post('/concerts/store', [AdminController::class, 'storeConcert'])
         ->name('admin.concerts.store'); // Ajouter un concert
     Route::patch('/concerts/update', [AdminController::class, 'storeConcert'])
         ->name('admin.concerts.update'); // Modifier un concert
     Route::patch('/concerts/updateStatus', [AdminController::class, 'updateConcertStatus'])
-        ->name('admin.concerts.updateStatus'); // Confirmer ou annuler un concert
+        ->name('admin.concerts.updateStatus'); // Confirmer ou annuler un concert 
 });

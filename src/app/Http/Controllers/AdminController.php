@@ -94,10 +94,11 @@ class AdminController extends Controller
     }
 
     // ---------------------------------------------------------------------------
-    // Ajout concert
+    // Ajouter ou modifier un concert
     // ---------------------------------------------------------------------------
     public function storeConcert(Request $request)
     {
+        $mode = !empty($request->id_event) ? 'update' : 'create';
         try {
             // 1. Validation : on s'assure que les noms correspondent à ce que le JS envoie
             $validated = $request->validate([
@@ -108,11 +109,12 @@ class AdminController extends Controller
             ]);
 
             // 2. Création de l'objet et mapping colonnes
-            $concert             = !empty($request->id_event) ? Concert::findOrFail($request->id_event) : new Concert();
+            $concert             = $mode === 'update' ? Concert::findOrFail($request->id_event) : new Concert();
             $concert->name_event = $validated['name_event'];
             $concert->date_event = $validated['date_event'] . ' 21:00:00';
             $concert->link_event = $validated['link_event'];
             $concert->type_event = $validated['type_event'];
+            $concert->active     = $mode === 'create' ? false : $concert->active;
             $concert->save();
 
             return response()->json([
@@ -135,7 +137,7 @@ class AdminController extends Controller
     }
 
     // ---------------------------------------------------------------------------
-    // Modifier un concert
+    // Modifier statut d'un concert
     // ---------------------------------------------------------------------------
     public function updateConcertStatus(Request $request)
     {
@@ -166,47 +168,41 @@ class AdminController extends Controller
         // TYPES
         $enumsStatus     = ['pending', 'confirmed'];
         $enumsSources    = ['phone', 'web'];
+        
         // RESERVATIONS CONFIRMEES
-        $reservations['confirmed'] = empty($dateGet) ? 
-            Reservation::where('status', 'confirmed')->whereDate('reserved_at', today())->orderBy('reserved_at', 'asc')->get() : 
-            Reservation::where('status', 'confirmed')->whereDate('reserved_at', $dateGet)->orderBy('reserved_at', 'asc')->get();
+        $reservations['confirmed'] = empty($dateGet) ? Reservation::where('status', 'confirmed')->whereDate('reserved_at', today())->orderBy('reserved_at', 'asc')->get() : Reservation::where('status', 'confirmed')->whereDate('reserved_at', $dateGet)->orderBy('reserved_at', 'asc')->get();
+        
         // RESERVATIONS A VALIDER
         $reservations['pending'] = Reservation::where('status', 'pending')->orderBy('reserved_at', 'asc')->get();
         
         $reservations['all'] = $reservations['confirmed']->merge($reservations['pending']);
 
-        // STATS
+        // STATISTIQUES
         $stats['total']  = 0;
+        // PAR STATUT
         foreach($enumsStatus as $status) {
             $stats[$status] = empty($dateGet) ? 
                 Reservation::where('status', $status)->whereDate('reserved_at', today())->count() : 
                 Reservation::where('status', $status)->whereDate('reserved_at', $dateGet)->count();
         }
+        // PAR SOURCES
         foreach($enumsSources as $sources) {
-            $stats[$sources] = empty($dateGet) ? 
-                Reservation::where('source', $sources)
-                            ->where('status', 'confirmed')
-                            ->whereDate('reserved_at', today())
-                            ->count() : 
-                Reservation::where('source', $sources)
-                            ->where('status', 'confirmed')
-                            ->whereDate('reserved_at', $dateGet)
-                            ->count();
+            $stats[$sources] = empty($dateGet) ? Reservation::where('source', $sources)->where('status', 'confirmed')->whereDate('reserved_at', today())->count() : Reservation::where('source', $sources)->where('status', 'confirmed')->whereDate('reserved_at', $dateGet)->count();
             $stats['total'] += $stats[$sources];
         }            
         
         $oQuota          = Quota::all()->first();
-        $allTables       = Table::where('active', true)
-                                ->orderBy('name')->get();
+        $allTables       = Table::where('active', true)->orderBy('name')->get();
 
         return view('admin.reservations', compact('reservations', 'stats', 'dateGet', 'page', 'oQuota', 'allTables'));
     }
 
     // ---------------------------------------------------------------------------
-    // Ajout reservation manuelle
+    // Ajouter reservation
     // ---------------------------------------------------------------------------
-    public function storePhoneReservation(Request $request)
+    public function storeReservation(Request $request)
     {
+        $mode = !empty($request->id) ? 'update' : 'create';
         try {
             // 1. Validation : on s'assure que les noms correspondent à ce que le JS envoie
             $validated = $request->validate([
@@ -217,28 +213,29 @@ class AdminController extends Controller
                 'tel'    => 'nullable|string',
                 'emp'    => 'nullable|string', // Non présent en DB, mais utile pour la logique
                 'rq'     => 'nullable|string',
-                'tables' => 'nullable|array'
+                'source' => 'required|string'
             ]);
 
             // 2. Création de l'objet et mapping colonnes
-            $reservation              = new Reservation();
+            $reservation              = $mode === 'update' ? Reservation::findOrFail($request->id) : new Reservation();
             $reservation->nom         = $validated['name'];
             $reservation->reserved_at = $validated['date'] . ' ' . $validated['heure'] . ':00';
             $reservation->guest_count = $validated['nb'];
             $reservation->phone       = $validated['tel'];
             $reservation->mail        = $request->mail ?? null;
             $reservation->remarque    = $validated['rq'];
-            $reservation->tables_id   = !empty($request->tables) ? implode(',', $request->tables) : null;
-            $reservation->status      = 'confirmed';
-            $reservation->source      = 'phone';
+            $reservation->status      = $mode === 'create' 
+                ? ($validated['source'] === 'phone' ? 'confirmed' : 'pending') 
+                : $reservation->status;
+            $reservation->source      = $validated['source'];
             $reservation->dateresa    = $validated['date']; 
             $reservation->heure       = $validated['heure'];
             $reservation->save();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Réservation enregistrée !',
-                'id'      => $reservation->id
+                'message' => !empty($request->id) ? 'Reservation modifié' : 'Reservation enregistré',
+                'table'      => $reservation
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -255,60 +252,7 @@ class AdminController extends Controller
     }
 
     // ---------------------------------------------------------------------------
-    // Ajout resrevation online
-    // ---------------------------------------------------------------------------
-    public function storeWebReservation(Request $request)
-    {
-        try {
-            // 1. Validation : on s'assure que les noms correspondent à ce que le JS envoie
-            $validated = $request->validate([
-                'name'   => 'required|string|max:255',
-                'date'   => 'required|date',
-                'heure'  => 'required|string',
-                'nb'     => 'required|integer|min:1',
-                'tel'    => 'nullable|string',
-                'emp'    => 'nullable|string', // Non présent en DB, mais utile pour la logique
-                'rq'     => 'nullable|string',
-                'tables' => 'nullable|array'
-            ]);
-
-            // 2. Création de l'objet et mapping des colonnes
-            $reservation = new Reservation();
-            $reservation->nom         = $validated['name'];
-            $reservation->reserved_at = $validated['date'] . ' ' . $validated['heure'] . ':00';
-            $reservation->guest_count = $validated['nb'];
-            $reservation->phone       = $validated['tel'];
-            $reservation->mail        = $request->mail ?? null;
-            $reservation->remarque    = $validated['rq'];
-            $reservation->tables_id   = !empty($request->tables) ? implode(',', $request->tables) : null;
-            $reservation->status      = 'confirmed';
-            $reservation->source      = 'web';
-            $reservation->dateresa     = $validated['date']; 
-            $reservation->heure        = $validated['heure'];
-            $reservation->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Réservation enregistrée !',
-                'id'      => $reservation->id
-            ]);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'errors'  => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error("Erreur résa : " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => "Erreur SQL : " . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    // ---------------------------------------------------------------------------
-    // Modifier une reservation
+    // Modifier statut d'une une reservation
     // ---------------------------------------------------------------------------
     public function updateReservationStatus(Request $request)
     {

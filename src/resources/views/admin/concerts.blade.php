@@ -88,7 +88,6 @@
                 </div>
                 <div style="margin-top: 25px; display: flex; gap: 15px;">
                     <input type="hidden" id="eventId" name="eventId" /> 
-                    <input type="hidden" id="method-form" />
                     <button type="submit" class="btn btn-phone" style="flex: 1;">
                         <span id="button-text"></span>
                     </button>
@@ -100,10 +99,8 @@
         </div>
     </div>
 <script>
-    // 1. Au chargement de la page
-    // Initialisation des données depuis Laravel
+    // Récupérer tout les concerts
     let concerts = @json($concerts); 
-    // DataTables
     $(document).ready(function() {
         $('#concertsTable').DataTable({
             "paging": false,
@@ -116,7 +113,9 @@
         });
     });
     
-    // --- GESTION DU FORMULAIRE (ENVOI LARAVEL) ---
+    //-----------------------------------------------------------------
+    // Ajouter ou editer un concert
+    //-----------------------------------------------------------------
     $("#concertForm").on("submit", function() {
         const formData = {
             name_event: $('#eventName').val(),
@@ -139,8 +138,8 @@
         .then(res => res.json())
         .then(data => {
             if(data.success) {
+                window.location.reload();
                 closeModal();
-                parent.location.reload(); 
             } else {
                 alert("❌ Erreur : " + (data.message || "Inconnue"));
             }
@@ -158,15 +157,20 @@
         return [year, month, day].join('-');return newDate;
     }
     
+    //-----------------------------------------------------------------
     // Modal ajouter un concert
+    //-----------------------------------------------------------------
     function addConcert() {
         $('#concert-modal').css('display', "flex");
         $("#modal-title").text('Ajouter un concert');
+        $('#eventName').focus();
         $("#concertForm")[0].reset();
         $("#button-text").text('Ajouter');
     }
 
+    //-----------------------------------------------------------------
     // Modal editer un concert
+    //-----------------------------------------------------------------
     function editConcert(id) { 
         $('#concert-modal').css('display', "flex");
         const event = concerts.find(res => res.id === id);
@@ -178,10 +182,11 @@
         $("#eventLink").val(event.link_event);
         $("#eventId").val(event.id);
         $("#button-text").text('Modifier');
-        $("#method-form").val('PATCH');
     }
 
-    // Fermer la modal de création d'une reservation manuelle
+    //-----------------------------------------------------------------
+    // Fermer la modal
+    //-----------------------------------------------------------------
     function closeModal() { 
         $('#concert-modal').css("display", "none"); 
     }
