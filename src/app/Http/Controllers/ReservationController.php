@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreReservationRequest;
-use App\Http\Requests\UpdateReservationRequest;
+use Illuminate\Http\Request;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\Quota;
@@ -61,17 +60,9 @@ class ReservationController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreReservationRequest $request)
+    public function store(Request $request)
     {
         $mode = !empty($request->id) ? 'update' : 'create';
         try {
@@ -126,7 +117,7 @@ class ReservationController extends Controller
     // ---------------------------------------------------------------------------
     // Modifier statut d'une une reservation
     // ---------------------------------------------------------------------------
-    public function updateReservationStatus(UpdateReservationRequest $request, Reservation $reservation)
+    public function updateReservationStatus(Request $request)
     {
         $validated = $request->validate([
             'action' => 'required|string'
@@ -143,37 +134,5 @@ class ReservationController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateReservationRequest $request, Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Reservation $reservation)
-    {
-        //
     }
 }
