@@ -234,7 +234,7 @@
     // Recherche reservations par date (Uniquement les reservations confirmées)
     //-------------------------------------------------------------------------
     $('#filterDate').on('change', function(e) {
-        window.location = "{{ route('admin.reservations') }}/"+$('#filterDate').val();
+        window.location = "{{ route('admin.reservations.index') }}/"+$('#filterDate').val();
     });
 
     //-----------------------------------------------------------------

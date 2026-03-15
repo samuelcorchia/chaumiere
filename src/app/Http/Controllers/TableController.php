@@ -13,7 +13,10 @@ class TableController extends Controller
      */
     public function index()
     {
-        //
+        $page        = 'tables';
+        $aTablesList = Table::where('active', true)->orderBy('name')->get();
+
+        return view('admin.tables', compact('page', 'aTablesList'));
     }
 
     /**
@@ -29,7 +32,17 @@ class TableController extends Controller
      */
     public function store(StoreTableRequest $request)
     {
-        //
+        // valider les données
+        $request->validate([
+            'name' => 'required',
+            'capacity' => 'required|integer'
+        ]);
+        $table = Table::create([
+            'name' => $request->name, 
+            'capacity' => $request->capacity
+        ]);
+
+        return response()->json(['success' => true, 'table' => $table], 201);
     }
 
     /**
@@ -61,6 +74,10 @@ class TableController extends Controller
      */
     public function destroy(Table $table)
     {
-        //
+        $table = Table::findOrFail($id);
+        $table->active = false;
+        $table->save(); 
+        
+        return response()->json(['success' => true, 'table' => $table]);
     }
 }

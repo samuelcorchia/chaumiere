@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreQuotaRequest;
 use App\Http\Requests\UpdateQuotaRequest;
 use App\Models\Quota;
+use App\Models\Table;
 
 class QuotaController extends Controller
 {
@@ -13,7 +14,11 @@ class QuotaController extends Controller
      */
     public function index()
     {
-        //
+        $page      = 'quotas';
+        $quota     = Quota::all()->first();
+        $iNbTables = Table::where('active', true)->count();
+
+        return view('admin.quotas', compact('page', 'quota', 'iNbTables'));
     }
 
     /**
@@ -53,7 +58,15 @@ class QuotaController extends Controller
      */
     public function update(UpdateQuotaRequest $request, Quota $quota)
     {
-        //
+        $request->validate(['nb' => 'required|integer|min:0']);
+
+        $quota = Quota::first();
+        if ($quota) {
+            $quota->update(['nb' => $request->nb]);
+        } else {
+            Quota::create(['nb' => $request->nb]);
+        }
+        return response()->json(['success' => true], 200);
     }
 
     /**
