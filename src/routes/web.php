@@ -82,9 +82,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::prefix('concerts')->name('concerts.')->group(function () {
         Route::get('/{date?}', [ConcertController::class, 'list'])
             ->name('index'); // Liste des concert validées ou en attente (par date si renseigné)
-        Route::post('/store', [ConcertController::class, 'storeConcert'])
+        Route::post('/store', [ConcertController::class, 'store'])
             ->name('store'); // Ajouter un concert
-        Route::patch('/update', [ConcertController::class, 'storeConcert'])
+        Route::patch('/update', [ConcertController::class, 'store'])
             ->name('update'); // Modifier un concert
         Route::patch('/updateStatus', [ConcertController::class, 'updateConcertStatus'])
             ->name('updateStatus'); // Confirmer ou annuler un concert 
