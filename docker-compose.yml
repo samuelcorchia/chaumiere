@@ -23,6 +23,7 @@ services:
 
   mysql:
     image: mysql:8.0
+    command: --skip-name-resolve
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: laravel_resto
