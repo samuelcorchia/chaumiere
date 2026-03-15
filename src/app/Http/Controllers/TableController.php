@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTableRequest;
-use App\Http\Requests\UpdateTableRequest;
+use Illuminate\Http\Request;
 use App\Models\Table;
 
 class TableController extends Controller
@@ -20,17 +19,9 @@ class TableController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTableRequest $request)
+    public function store(Request $request)
     {
         // valider les données
         $request->validate([
@@ -46,38 +37,14 @@ class TableController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Table $table)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Table $table)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTableRequest $request, Table $table)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Table $table)
+    public function destroy($id)
     {
         $table = Table::findOrFail($id);
         $table->active = false;
         $table->save(); 
         
-        return response()->json(['success' => true, 'table' => $table]);
+        return response()->json(['success' => true, 'table' => $id]);
     }
 }

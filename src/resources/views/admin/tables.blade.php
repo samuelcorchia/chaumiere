@@ -52,63 +52,59 @@
             let tableName     = $('#tableName').val();
             let tableCapacity = $('#tableCapacity').val();
 
+            // Petite sécurité : on ne fait rien si c'est vide
             if(!tableName || !tableCapacity) return;
-            fetch("{{ route('admin.tables.store') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "X-CSRF-TOKEN": csrfToken
-                },
-                // 2. On envoie les données ICI, dans le corps de la requête
-                body: JSON.stringify({
+            
+            // Appel methode d'ajout de table
+            $.ajax({
+                url: "{{ route('admin.tables.store') }}",
+                type: 'POST',
+                data: {
+                    _token: csrfToken,
                     name: tableName,
                     capacity: tableCapacity
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    let newBloc = `
-                    <div id="table-${data.table.id}" class="table-item" onclick="desactiveTable(${data.table.id}, '${data.table.name}')">
-                        <div id="table-name" class="table-number">${data.table.name}</div>
-                        <div class="table-capacity">${data.table.capacity} places</div>
-                    </div>
-                    `;
-                    $("#tablesGrid").append(newBloc);
-                    getStats();
-                    $(':input').val('');
-                } else {
-                    console.error("Erreurs de validation :", data.errors);
-                    alert("Erreur : " + JSON.stringify(data.errors));
+                }, 
+                datatype: 'json',
+                success: function(data) {
+                    if(data.success) {
+                        $("#tablesGrid").append(`
+                        <div id="table-${data.table.id}" class="table-item" onclick="desactiveTable(${data.table.id}, '${data.table.name}')">
+                            <div class="table-number">${data.table.name}</div>
+                            <div class="table-capacity">${data.table.capacity} places</div>
+                        </div>
+                        `);
+                        $(':input').val('');
+                        getStats();
+                    }
+                },
+                error: function(xhr) {
+                    alert("Erreur lors de l'ajout de la table");
                 }
-            })
-            .catch(error => console.error("Erreur fatale :", error));
+            });
         }
 
         // DESACTIVATE TABLE
         function desactiveTable(id, name) {
-            if(!confirm(`Confirmer la descativation de la table ${name} ?`)) return;
+            if(!confirm(`Confirmer la désactivation de la table ${name} ?`)) return;
             let url = "{{ route('admin.tables.desactive', ['id' => 'ID_HERE']) }}";
             url = url.replace('ID_HERE', id);
-            fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Content-Type': 'application/json'
+            $.ajax({
+                url: url,
+                type: 'PATCH',
+                data: {
+                    _token: csrfToken
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if(data.success) {
+                        $(`#table-${id}`).remove();
+                        getStats();
+                    }
+                },
+                error: function(xhr) {
+                    alert("Erreur lors de la désactivation");
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    $(`#table-${data.table.id}`).remove();
-                    getStats();
-                } else {
-                    console.error("Erreurs de validation :", data.errors);
-                    alert("Erreur : " + JSON.stringify(data.errors));
-                }
-            })
-            .catch(error => console.error("Erreur fatale :", error));
+            });
         }
     </script>
 @endsection

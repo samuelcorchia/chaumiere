@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreConcertRequest;
-use App\Http\Requests\UpdateConcertRequest;
+use Illuminate\Http\Request;
 use App\Models\Concert;
 
 class ConcertController extends Controller
@@ -16,10 +15,7 @@ class ConcertController extends Controller
         $page = 'concerts';
 
         $concerts = Concert::all();
-        /*empty($dateGet) ? 
-            Concert::whereDate('reserved_at', today())->orderBy('reserved_at', 'asc')->get() : 
-            Concert::whereDate('reserved_at', $dateGet)->orderBy('reserved_at', 'asc')->get();
-        */
+
         return view('admin.concerts', compact('page', 'concerts'));
     }
 
@@ -38,17 +34,9 @@ class ConcertController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreConcertRequest $request)
+    public function store(Request $request)
     {
         $mode = !empty($request->id_event) ? 'update' : 'create';
         try {
@@ -91,7 +79,7 @@ class ConcertController extends Controller
     // ---------------------------------------------------------------------------
     // Modifier statut d'un concert
     // ---------------------------------------------------------------------------
-    public function updateConcertStatus(UpdateConcertRequest $request, Concert $concert)
+    public function updateConcertStatus(Request $request)
     {
         $validated = $request->validate([
             'id'     => 'required|integer',
@@ -109,37 +97,5 @@ class ConcertController extends Controller
     
                 ], 500);
         }
-    }
-    
-    /**
-     * Display the specified resource.
-     */
-    public function show(Concert $concert)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Concert $concert)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateConcertRequest $request, Concert $concert)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Concert $concert)
-    {
-        //
     }
 }
